@@ -1,0 +1,55 @@
+version: '3'
+
+vars:
+  demos_base_dir: _demos
+  demo_pages_base_dir: '{{ .demos_base_dir }}/pages'
+
+tasks:
+  # internal tasks
+  templ/fmt:
+    internal: true
+    silent: true
+    dir: '{{ .demo_pages_base_dir }}'
+    cmds:
+      - echo "run templ fmt"
+      - templ fmt .
+
+  templ/gen:
+    internal: true
+    silent: true
+    dir: '{{ .demo_pages_base_dir }}'
+    env:
+      TEMPL_EXPERIMENT: rawgo
+    cmds:
+      - echo "run templ generate"
+      - templ generate
+
+  templ/live:
+    internal: true
+    silent: true
+    dir: '{{ .demo_pages_base_dir }}'
+    env:
+      TEMPL_EXPERIMENT: rawgo
+    cmds:
+      - templ generate --watch --proxy="http://localhost:8080" --open-browser=false -v
+
+  server/live:
+    internal: true
+    silent: true
+    cmds:
+      - templier --config ./.templier.yml
+
+  # public tasks
+  templ:
+    desc: Run templ fmt and templ generate commands on the demos.
+    silent: true
+    cmds:
+      - task: templ/fmt
+      - task: templ/gen
+
+  live:
+    desc: Run the demos live server with templ watch mode.
+    silent: true
+    deps: [templ/live, server/live]
+    cmds:
+      - echo "Running live server"

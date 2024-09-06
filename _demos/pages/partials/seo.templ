@@ -1,0 +1,69 @@
+package partials
+
+import "github.com/indaco/teseo/schemaorg"
+
+// Example contact points
+var contactPoints = []schemaorg.ContactPoint{
+	{
+		Type:              "ContactPoint",
+		Telephone:         "+1-800-555-1212",
+		ContactType:       "Customer Service",
+		AreaServed:        "US",
+		AvailableLanguage: "English",
+	},
+}
+
+// Example sameAs URLs
+var sameAs = []string{
+	"https://www.facebook.com/example",
+	"https://www.twitter.com/example",
+	"https://www.linkedin.com/company/example",
+}
+
+// Create an organization
+var org = schemaorg.NewOrganization(
+	"Example Inc.",
+	"https://www.example.com",
+	"https://www.example.com/logo.png",
+	contactPoints,
+	sameAs,
+)
+
+var website = schemaorg.WebSite{
+	URL:           "https://www.example.com",
+	Name:          "Example Website",
+	AlternateName: "Example Site",
+	Description:   "An example website for demonstration purposes.",
+	PotentialAction: &schemaorg.Action{
+		Type: "SearchAction",
+		Target: &schemaorg.Target{
+			Type:        "EntryPoint",
+			URLTemplate: "https://www.example.com/search?q={search_term_string}",
+		},
+		QueryInput: "required name=search_term_string",
+	},
+}
+
+// Create item list elements using the constructor
+var itemListElements = []schemaorg.ItemListElement{
+	schemaorg.NewItemListElement("Home", "https://www.example.com/", 1),
+	schemaorg.NewItemListElement("About Us", "https://www.example.com/about", 2),
+}
+
+// Create an item list using the constructor
+var itemList = schemaorg.NewItemList(itemListElements)
+
+var sne = schemaorg.SiteNavigationElement{
+	Name:       "Main Navigation",
+	URL:        "https://www.example.com/secondary",
+	Position:   1,
+	Identifier: "main-nav",
+	ItemList:   &itemList,
+}
+
+templ SEO() {
+	@org.ToJsonLd()
+	@website.ToJsonLd()
+	@sne.ToJsonLd()
+	{ children... }
+}

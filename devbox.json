@@ -1,0 +1,22 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.12.0/.schema/devbox.schema.json",
+  "packages": [
+    "git@latest",
+    "go@1.22",
+    "go-task@latest",
+    "gum@latest",
+    "templ@latest"
+  ],
+  "shell": {
+    "init_hook": [
+      "gum style --border normal --margin '1' --padding '1 2' --border-foreground 212 'Welcome to the teseo devbox!'",
+      "gum log -sl info 'Installing go modules...' module 'romshark/templier'",
+      "go install github.com/romshark/templier@latest"
+    ],
+    "scripts": {
+      "templ": ["task templ"],
+      "live": ["task live"],
+      "preview": ["task preview"]
+    }
+  }
+}

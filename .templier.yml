@@ -1,0 +1,56 @@
+# proxy-timeout defines how long to wait for the
+# application server process to start when receiving
+# connection refused errors while proxying.
+proxy-timeout: 10s
+
+# lint enables golangci-lint when true.
+lint: false
+
+# templier-host defines what host address to run Templiér on.
+templier-host: 'localhost:7332'
+
+# print-js-debug-logs enables Templiér debug logs in the browser.
+print-js-debug-logs: true
+
+# log allows you to chose from different log levels:
+#  "": empty is same as erronly
+#  erronly: error logs only
+#  verbose: verbose logging of relevant events and timings
+#  debug: verbose debug logging
+log: verbose
+
+debounce:
+  # debounce.templ defines how long to wait for more _templ.txt file changes
+  # after the first one occured before triggering all browser tabs to reload.
+  templ: 50ms
+
+  # debounce.go defines how long to wait for more non-templ file changes
+  # after the first one occured before triggering server rebuild and restart.
+  go: 50ms
+
+# tls can be set to null to serve HTTP instead of HTTPS.
+tls: null
+
+app:
+  # app.dir-src-root defines the path to the Go module source root directory.
+  dir-src-root: ./
+
+  exclude:
+    - '.git*'
+    - .* # all hidden files and directories
+    - '*~' # all temporary files with a tilde (fixes jetbrains IDEs save)
+
+  # app.dir-cmd defines the path to the main package directory
+  # within the app source directory.
+  dir-cmd: ./_demos
+
+  # app.dir-work defines the path to the workspace directory
+  # to run the application server executable in.
+  dir-work: ./
+
+  # app.host defines the host address the application server is running on.
+  host: http://localhost:3300
+  go-flags:
+  flags:
+
+custom-watchers:

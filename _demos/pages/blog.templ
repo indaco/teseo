@@ -1,0 +1,48 @@
+package pages
+
+import (
+	"github.com/indaco/teseo/_demos/pages/partials"
+	"github.com/indaco/teseo/_demos/types"
+)
+
+func postsList() []struct {
+	name string
+	url  string
+} {
+
+	posts := []struct {
+		name string
+		url  string
+	}{
+		{name: "first-post", url: "/blog/posts/first-post"},
+		{name: "second-post", url: "/blog/posts/second-post"},
+	}
+	return posts
+}
+
+templ BlogPage(seoItems *types.SEOItems) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta name="description" content="Something about the blog page"/>
+			<title>teseo - blog</title>
+			<link rel="canonical" href="https://example.com/blog"/>
+			<link rel="stylesheet" type="text/css" href="/statics/styles.css"/>
+			@partials.SEO() {
+				@seoItems.WebPage.ToJsonLd()
+			}
+		</head>
+		<body>
+			@partials.NavBar()
+			<h1>This is the Blog</h1>
+			<h2>All posts</h2>
+			<ul>
+				for _, item := range postsList() {
+					<li><a href={ templ.URL(item.url) }>{ item.name }</a></li>
+				}
+			</ul>
+		</body>
+	</html>
+}

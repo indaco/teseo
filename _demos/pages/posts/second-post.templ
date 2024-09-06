@@ -1,0 +1,22 @@
+package posts
+
+import "github.com/indaco/teseo/_demos/pages/partials"
+
+templ SecondPostPage() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>teseo- blog</title>
+			<link rel="stylesheet" type="text/css" href="/statics/styles.css"/>
+			@partials.SEO() {
+			}
+		</head>
+		<body>
+			@partials.NavBar()
+			<h1>Second Post</h1>
+			<p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Mollitia perferendis similique, inventore consequatur dolores tenetur fugit explicabo velit nobis tempora. Perferendis modi ipsum in velit quod error dicta labore aut!</p>
+		</body>
+	</html>
+}

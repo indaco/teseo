@@ -1,0 +1,32 @@
+package pages
+
+import (
+	"github.com/indaco/teseo/_demos/pages/partials"
+	"github.com/indaco/teseo/_demos/types"
+)
+
+templ AboutPage(seoItems *types.SEOItems) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta name="description" content="Something about the about page"/>
+			<title>teseo - about</title>
+			<link rel="canonical" href="https://example.com/about"/>
+			<link rel="stylesheet" type="text/css" href="/statics/styles.css"/>
+			@partials.SEO() {
+				@seoItems.WebPage.ToJsonLd()
+				@seoItems.SiteNavElement.ToJsonLd()
+				@seoItems.Breadcrumb.ToJsonLd()
+				@seoItems.Profile.ToMetaTags()
+				@seoItems.TwitterCard.ToMetaTags()
+			}
+		</head>
+		<body>
+			@partials.NavBar()
+			<h1>This is the About Page</h1>
+			<p>Inspect the page source to see page specific structured data and metadata</p>
+		</body>
+	</html>
+}
