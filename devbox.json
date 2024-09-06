@@ -15,8 +15,7 @@
     ],
     "scripts": {
       "templ": ["task templ"],
-      "live": ["task live"],
-      "preview": ["task preview"]
+      "live": ["task live"]
     }
   }
 }

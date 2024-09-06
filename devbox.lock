@@ -61,12 +61,12 @@
               "default": true
             },
             {
-              "name": "debug",
-              "path": "/nix/store/4y5k4pa84a168pyvccjykb4050q2g8dj-git-2.46.0-debug"
-            },
-            {
               "name": "doc",
               "path": "/nix/store/icq598vg50bamj3qk44vv218qdbgjmkr-git-2.46.0-doc"
+            },
+            {
+              "name": "debug",
+              "path": "/nix/store/4y5k4pa84a168pyvccjykb4050q2g8dj-git-2.46.0-debug"
             }
           ],
           "store_path": "/nix/store/hxxkx0y690n2iadckr6imndg8223fcq1-git-2.46.0"
