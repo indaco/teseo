@@ -98,8 +98,6 @@ func (art *Article) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the Article struct as `template.HTML` value for Go's `html/template`.
 func (art *Article) ToGoHTMLJsonLd() (template.HTML, error) {
-	art.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := art.ToJsonLd()
 

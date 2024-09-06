@@ -101,8 +101,6 @@ func (p *Person) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the Person struct as `template.HTML` value for Go's `html/template`.
 func (p *Person) ToGoHTMLJsonLd() (template.HTML, error) {
-	p.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := p.ToJsonLd()
 

@@ -128,8 +128,6 @@ func (restaurant *Restaurant) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Restaurant as `template.HTML` value for Go's `html/template`.
 func (restaurant *Restaurant) ToGoHTMLMetaTags() (template.HTML, error) {
-	restaurant.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := restaurant.ToMetaTags()
 

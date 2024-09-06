@@ -139,8 +139,6 @@ func (p *Product) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the Product struct as `template.HTML` value for Go's `html/template`.
 func (p *Product) ToGoHTMLJsonLd() (template.HTML, error) {
-	p.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := p.ToJsonLd()
 

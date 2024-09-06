@@ -99,8 +99,6 @@ func (mp *MusicPlaylist) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Music Playlist as `template.HTML` value for Go's `html/template`.
 func (mp *MusicPlaylist) ToGoHTMLMetaTags() (template.HTML, error) {
-	mp.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := mp.ToMetaTags()
 

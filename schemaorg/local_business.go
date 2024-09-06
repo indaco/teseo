@@ -108,8 +108,6 @@ func (lb *LocalBusiness) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the LocalBusiness struct as `template.HTML` value for Go's `html/template`.
 func (lb *LocalBusiness) ToGoHTMLJsonLd() (template.HTML, error) {
-	lb.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := lb.ToJsonLd()
 

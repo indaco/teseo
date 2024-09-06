@@ -122,8 +122,6 @@ func (video *Video) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Video as `template.HTML` value for Go's `html/template`.
 func (video *Video) ToGoHTMLMetaTags() (template.HTML, error) {
-	video.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := video.ToMetaTags()
 

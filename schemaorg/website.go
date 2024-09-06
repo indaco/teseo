@@ -99,8 +99,6 @@ func (ws *WebSite) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the WebSite struct as `template.HTML` value for Go's `html/template`.
 func (ws *WebSite) ToGoHTMLJsonLd() (template.HTML, error) {
-	ws.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := ws.ToJsonLd()
 

@@ -69,8 +69,6 @@ func (org *Organization) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the Organization struct as `template.HTML` value for Go's `html/template`.
 func (org *Organization) ToGoHTMLJsonLd() (template.HTML, error) {
-	org.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := org.ToJsonLd()
 

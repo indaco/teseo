@@ -111,8 +111,6 @@ func (fp *FAQPage) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the FAQPage struct as`template.HTML` value for Go's `html/template`.
 func (fp *FAQPage) ToGoHTMLJsonLd() (template.HTML, error) {
-	fp.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := fp.ToJsonLd()
 

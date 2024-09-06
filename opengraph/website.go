@@ -88,8 +88,6 @@ func (ws *WebSite) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph WebSite as `template.HTML` value for Go's `html/template`.
 func (ws *WebSite) ToGoHTMLMetaTags() (template.HTML, error) {
-	ws.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := ws.ToMetaTags()
 

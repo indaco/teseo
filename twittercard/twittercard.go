@@ -286,8 +286,6 @@ func (tc *TwitterCard) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Twitter Card as `template.HTML` value for Go's html/template
 func (tc *TwitterCard) ToGoHTMLMetaTags() (template.HTML, error) {
-	tc.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := tc.ToMetaTags()
 

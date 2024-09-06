@@ -111,8 +111,6 @@ func (wp *WebPage) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the WebSite struct as `template.HTML` value for Go's `html/template`.
 func (wp *WebPage) ToGoHTMLJsonLd() (template.HTML, error) {
-	wp.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := wp.ToJsonLd()
 

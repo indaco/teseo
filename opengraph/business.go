@@ -128,8 +128,6 @@ func (bus *Business) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Business as `template.HTML` value for Go's `html/template`.
 func (bus *Business) ToGoHTMLMetaTags() (template.HTML, error) {
-	bus.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := bus.ToMetaTags()
 

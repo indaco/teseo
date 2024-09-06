@@ -109,8 +109,6 @@ func (e *Event) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the Event struct as `template.HTML` value for Go's `html/template`.
 func (e *Event) ToGoHTMLJsonLd() (template.HTML, error) {
-	e.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := e.ToJsonLd()
 

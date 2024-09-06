@@ -88,8 +88,6 @@ func (mrs *MusicRadioStation) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Music Radio Station as `template.HTML` value for Go's `html/template`.
 func (mrs *MusicRadioStation) ToGoHTMLMetaTags() (template.HTML, error) {
-	mrs.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := mrs.ToMetaTags()
 

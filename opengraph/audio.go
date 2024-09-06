@@ -98,8 +98,6 @@ func (audio *Audio) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Audio as `template.HTML` value for Go's `html/template`.
 func (audio *Audio) ToGoHTMLMetaTags() (template.HTML, error) {
-	audio.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := audio.ToMetaTags()
 

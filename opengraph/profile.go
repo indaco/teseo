@@ -109,8 +109,6 @@ func (p *Profile) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Profile as `template.HTML` value for Go's `html/template`.
 func (p *Profile) ToGoHTMLMetaTags() (template.HTML, error) {
-	p.ensureDefaults()
-
 	// Create the templ component.
 	templComponent := p.ToMetaTags()
 
