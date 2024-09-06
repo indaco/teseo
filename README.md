@@ -362,7 +362,7 @@ Then render it in your templ component as the example above.
 
 ### OpenGraph Meta Tags
 
-For **OpenGraph**, entities come with a `ToMetaTags` function that generates the necessary meta tags for OpenGraph data. Similar to Schema.org, you can either create the entity via a **pure struct** or a **factory method**. Here’s an example for generating meta tags for an _Article_:
+For **OpenGraph**, entities come with `ToMetaTags` and `ToGoHTMLMetaTags` functions that generates the necessary meta tags for OpenGraph data. Similar to Schema.org, you can either create the entity via a **pure struct** or a **factory method**. Here’s an example for generating meta tags for an _Article_:
 
 ```templ
 package pages
@@ -406,7 +406,7 @@ The expected output:
 
 ### Twitter Cards
 
-For **Twitter Cards**, you can also use either the **pure struct** or **factory methods** to generate Twitter Card meta tags via the `ToMetaTags` function.. Here’s how to generate a _Twitter Summary Card_.
+For **Twitter Cards**, you can also use either the **pure struct** or **factory methods** to generate Twitter Card meta tags via the `ToMetaTags` and `ToGoHTMLMetaTags` functions. Here’s how to generate a _Twitter Summary Card_.
 
 ```templ
 package pages
