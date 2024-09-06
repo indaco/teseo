@@ -3,8 +3,8 @@ package schemaorg
 import (
 	"context"
 	"fmt"
-	"html"
 	"io"
+	"log"
 	"net/url"
 	"strings"
 	"unicode"
@@ -105,33 +105,16 @@ func (bcl *BreadcrumbList) ToJsonLd() templ.Component {
 }
 
 // ToGoHTMLJsonLd renders the BreadcrumbList struct as a string for Go's `html/template`.
-func (bcl *BreadcrumbList) ToGoHTMLJsonLd() string {
+func (bcl *BreadcrumbList) ToGoHTMLJsonLd() (string, error) {
 	bcl.ensureDefaults()
-
-	var sb strings.Builder
-	sb.WriteString(`<script type="application/ld+json">`)
-	sb.WriteString("\n{\n")
-	sb.WriteString(fmt.Sprintf(`  "@context": "%s",`, html.EscapeString(bcl.Context)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "@type": "%s",`, html.EscapeString(bcl.Type)))
-	sb.WriteString("\n")
-	sb.WriteString(`  "itemListElement": [`)
-
-	for i, item := range bcl.ItemListElement {
-		if i > 0 {
-			sb.WriteString(", ")
-		}
-		sb.WriteString("{\n")
-		sb.WriteString(`    "@type": "ListItem",`)
-		sb.WriteString(fmt.Sprintf(`"position": %d,`, item.Position))
-		sb.WriteString(fmt.Sprintf(`"name": "%s",`, html.EscapeString(item.Name)))
-		sb.WriteString(fmt.Sprintf(`"item": "%s"`, html.EscapeString(item.Item)))
-		sb.WriteString("\n}")
+	// Create the templ component.
+	templComponent := bcl.ToJsonLd()
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
 	}
-
-	sb.WriteString("\n  ]\n")
-	sb.WriteString("}\n</script>")
-	return sb.String()
+	return string(html), nil
 }
 
 func (bcl *BreadcrumbList) ensureDefaults() {

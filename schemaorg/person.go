@@ -2,10 +2,8 @@ package schemaorg
 
 import (
 	"context"
-	"fmt"
-	"html"
 	"io"
-	"strings"
+	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -101,79 +99,16 @@ func (p *Person) ToJsonLd() templ.Component {
 }
 
 // ToGoHTMLJsonLd renders the Person struct as a string for Go's `html/template`.
-func (p *Person) ToGoHTMLJsonLd() string {
+func (p *Person) ToGoHTMLJsonLd() (string, error) {
 	p.ensureDefaults()
-
-	var sb strings.Builder
-	sb.WriteString(`<script type="application/ld+json">`)
-	sb.WriteString("\n{\n")
-	sb.WriteString(fmt.Sprintf(`  "@context": "%s",`, html.EscapeString(p.Context)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "@type": "%s",`, html.EscapeString(p.Type)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "name": "%s",`, html.EscapeString(p.Name)))
-	sb.WriteString("\n")
-	if p.URL != "" {
-		sb.WriteString(fmt.Sprintf(`  "url": "%s",`, html.EscapeString(p.URL)))
-		sb.WriteString("\n")
+	// Create the templ component.
+	templComponent := p.ToJsonLd()
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
 	}
-	if p.Email != "" {
-		sb.WriteString(fmt.Sprintf(`  "email": "%s",`, html.EscapeString(p.Email)))
-		sb.WriteString("\n")
-	}
-	if p.Image != nil {
-		sb.WriteString(`  "image": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "ImageObject", "url": "%s"`, html.EscapeString(p.Image.URL)))
-		sb.WriteString("},\n")
-	}
-	if p.JobTitle != "" {
-		sb.WriteString(fmt.Sprintf(`  "jobTitle": "%s",`, html.EscapeString(p.JobTitle)))
-		sb.WriteString("\n")
-	}
-	if p.WorksFor != nil {
-		sb.WriteString(`  "worksFor": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "Organization", "name": "%s", "url": "%s"`, html.EscapeString(p.WorksFor.Name), html.EscapeString(p.WorksFor.URL)))
-		sb.WriteString("},\n")
-	}
-	if len(p.SameAs) > 0 {
-		sb.WriteString(`  "sameAs": [`)
-		for i, sameAs := range p.SameAs {
-			if i > 0 {
-				sb.WriteString(", ")
-			}
-			sb.WriteString(fmt.Sprintf(`"%s"`, html.EscapeString(sameAs)))
-		}
-		sb.WriteString("],\n")
-	}
-	if p.Gender != "" {
-		sb.WriteString(fmt.Sprintf(`  "gender": "%s",`, html.EscapeString(p.Gender)))
-		sb.WriteString("\n")
-	}
-	if p.BirthDate != "" {
-		sb.WriteString(fmt.Sprintf(`  "birthDate": "%s",`, html.EscapeString(p.BirthDate)))
-		sb.WriteString("\n")
-	}
-	if p.Nationality != "" {
-		sb.WriteString(fmt.Sprintf(`  "nationality": "%s",`, html.EscapeString(p.Nationality)))
-		sb.WriteString("\n")
-	}
-	if p.Telephone != "" {
-		sb.WriteString(fmt.Sprintf(`  "telephone": "%s",`, html.EscapeString(p.Telephone)))
-		sb.WriteString("\n")
-	}
-	if p.Address != nil {
-		sb.WriteString(`  "address": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "PostalAddress", "addressLocality": "%s", "addressCountry": "%s"`, html.EscapeString(p.Address.AddressLocality), html.EscapeString(p.Address.AddressCountry)))
-		sb.WriteString("},\n")
-	}
-	if p.Affiliation != nil {
-		sb.WriteString(`  "affiliation": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "Organization", "name": "%s"`, html.EscapeString(p.Affiliation.Name)))
-		sb.WriteString("},\n")
-	}
-
-	sb.WriteString("}\n</script>")
-	return sb.String()
+	return string(html), nil
 }
 
 // ensureDefaults sets default values for Person and its nested objects if they are not already set.

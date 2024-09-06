@@ -2,10 +2,8 @@ package schemaorg
 
 import (
 	"context"
-	"fmt"
-	"html"
 	"io"
-	"strings"
+	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -109,94 +107,16 @@ func (e *Event) ToJsonLd() templ.Component {
 }
 
 // ToGoHTMLJsonLd renders the Event struct as a string for Go's `html/template`.
-func (e *Event) ToGoHTMLJsonLd() string {
+func (e *Event) ToGoHTMLJsonLd() (string, error) {
 	e.ensureDefaults()
-
-	var sb strings.Builder
-	sb.WriteString(`<script type="application/ld+json">`)
-	sb.WriteString("\n{\n")
-	sb.WriteString(fmt.Sprintf(`  "@context": "%s",`, html.EscapeString(e.Context)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "@type": "%s",`, html.EscapeString(e.Type)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "name": "%s",`, html.EscapeString(e.Name)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "description": "%s",`, html.EscapeString(e.Description)))
-	sb.WriteString("\n")
-
-	if e.StartDate != "" {
-		sb.WriteString(fmt.Sprintf(`  "startDate": "%s",`, html.EscapeString(e.StartDate)))
-		sb.WriteString("\n")
+	// Create the templ component.
+	templComponent := e.ToJsonLd()
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
 	}
-	if e.EndDate != "" {
-		sb.WriteString(fmt.Sprintf(`  "endDate": "%s",`, html.EscapeString(e.EndDate)))
-		sb.WriteString("\n")
-	}
-
-	// EventStatus
-	if e.EventStatus != "" {
-		sb.WriteString(fmt.Sprintf(`  "eventStatus": "%s",`, html.EscapeString(e.EventStatus)))
-		sb.WriteString("\n")
-	}
-
-	// EventAttendanceMode
-	if e.EventAttendanceMode != "" {
-		sb.WriteString(fmt.Sprintf(`  "eventAttendanceMode": "%s",`, html.EscapeString(e.EventAttendanceMode)))
-		sb.WriteString("\n")
-	}
-
-	// Location
-	if e.Location != nil {
-		sb.WriteString(`  "location": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "Place", "name": "%s"`, html.EscapeString(e.Location.Name)))
-		if e.Location.Address != nil {
-			sb.WriteString(`, "address": {`)
-			sb.WriteString(fmt.Sprintf(`"@type": "PostalAddress", "addressLocality": "%s", "addressCountry": "%s"`, html.EscapeString(e.Location.Address.AddressLocality), html.EscapeString(e.Location.Address.AddressCountry)))
-			sb.WriteString("}")
-		}
-		if e.Location.Geo != nil {
-			sb.WriteString(`, "geo": {`)
-			sb.WriteString(fmt.Sprintf(`"@type": "GeoCoordinates", "latitude": %f, "longitude": %f`, e.Location.Geo.Latitude, e.Location.Geo.Longitude))
-			sb.WriteString("}")
-		}
-		sb.WriteString("},\n")
-	}
-
-	// Organizer
-	if e.Organizer != nil {
-		sb.WriteString(`  "organizer": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "Organization", "name": "%s"`, html.EscapeString(e.Organizer.Name)))
-		sb.WriteString("},\n")
-	}
-
-	// Performer
-	if e.Performer != nil {
-		sb.WriteString(`  "performer": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "Person", "name": "%s"`, html.EscapeString(e.Performer.Name)))
-		sb.WriteString("},\n")
-	}
-
-	// Images
-	if len(e.Image) > 0 {
-		sb.WriteString(`  "image": [`)
-		for i, img := range e.Image {
-			if i > 0 {
-				sb.WriteString(", ")
-			}
-			sb.WriteString(fmt.Sprintf(`"%s"`, html.EscapeString(img)))
-		}
-		sb.WriteString("],\n")
-	}
-
-	// Offers
-	if e.Offers != nil {
-		sb.WriteString(`  "offers": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "Offer", "price": "%s", "priceCurrency": "%s"`, html.EscapeString(e.Offers.Price), html.EscapeString(e.Offers.PriceCurrency)))
-		sb.WriteString("},\n")
-	}
-
-	sb.WriteString("}\n</script>")
-	return sb.String()
+	return string(html), nil
 }
 
 // ensureDefaults sets default values for Event and its nested objects if they are not already set.

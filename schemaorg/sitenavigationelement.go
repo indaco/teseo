@@ -4,10 +4,9 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
-	"html"
 	"io"
+	"log"
 	"os"
-	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -205,50 +204,16 @@ func (sne *SiteNavigationElement) ToJsonLd() templ.Component {
 }
 
 // ToGoHTMLJsonLd renders the SiteNavigationElement struct as a string for Go's `html/template`.
-func (sne *SiteNavigationElement) ToGoHTMLJsonLd() string {
+func (sne *SiteNavigationElement) ToGoHTMLJsonLd() (string, error) {
 	sne.ensureDefaults()
-
-	var sb strings.Builder
-	sb.WriteString(`<script type="application/ld+json">`)
-	sb.WriteString("\n{\n")
-	sb.WriteString(fmt.Sprintf(`  "@context": "%s",`, html.EscapeString(sne.Context)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "@type": "%s",`, html.EscapeString(sne.Type)))
-	sb.WriteString("\n")
-	if sne.Name != "" {
-		sb.WriteString(fmt.Sprintf(`  "name": "%s",`, html.EscapeString(sne.Name)))
-		sb.WriteString("\n")
+	// Create the templ component.
+	templComponent := sne.ToJsonLd()
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
 	}
-	if sne.URL != "" {
-		sb.WriteString(fmt.Sprintf(`  "url": "%s",`, html.EscapeString(sne.URL)))
-		sb.WriteString("\n")
-	}
-	if sne.Position != 0 {
-		sb.WriteString(fmt.Sprintf(`  "position": %d,`, sne.Position))
-		sb.WriteString("\n")
-	}
-	if sne.Identifier != "" {
-		sb.WriteString(fmt.Sprintf(`  "identifier": "%s",`, html.EscapeString(sne.Identifier)))
-		sb.WriteString("\n")
-	}
-	if sne.ItemList != nil {
-		sb.WriteString(`  "itemListElement": [`)
-		for i, item := range sne.ItemList.ItemListElement {
-			if i > 0 {
-				sb.WriteString(", ")
-			}
-			sb.WriteString("{\n")
-			sb.WriteString(fmt.Sprintf(`    "@type": "%s",`, html.EscapeString(item.Type)))
-			sb.WriteString(fmt.Sprintf(`"name": "%s",`, html.EscapeString(item.Name)))
-			sb.WriteString(fmt.Sprintf(`"url": "%s",`, html.EscapeString(item.URL)))
-			sb.WriteString(fmt.Sprintf(`"position": %d`, item.Position))
-			sb.WriteString("\n}")
-		}
-		sb.WriteString("],\n")
-	}
-
-	sb.WriteString("}\n</script>")
-	return sb.String()
+	return string(html), nil
 }
 
 // ToSitemapFile generates a sitemap XML file from the SiteNavigationElement struct.

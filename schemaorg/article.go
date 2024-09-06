@@ -2,10 +2,8 @@ package schemaorg
 
 import (
 	"context"
-	"fmt"
-	"html"
 	"io"
-	"strings"
+	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -98,72 +96,16 @@ func (art *Article) ToJsonLd() templ.Component {
 }
 
 // ToGoHTMLJsonLd renders the Article struct as a string for Go's `html/template`.
-func (art *Article) ToGoHTMLJsonLd() string {
+func (art *Article) ToGoHTMLJsonLd() (string, error) {
 	art.ensureDefaults()
-
-	var sb strings.Builder
-	sb.WriteString(`<script type="application/ld+json">`)
-	sb.WriteString("\n{\n")
-	sb.WriteString(fmt.Sprintf(`  "@context": "%s",`, html.EscapeString(art.Context)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "@type": "%s",`, html.EscapeString(art.Type)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "headline": "%s",`, html.EscapeString(art.Headline)))
-	sb.WriteString("\n")
-
-	// Images
-	if len(art.Image) > 0 {
-		sb.WriteString(`  "image": [`)
-		for i, img := range art.Image {
-			if i > 0 {
-				sb.WriteString(", ")
-			}
-			sb.WriteString(fmt.Sprintf(`"%s"`, html.EscapeString(img)))
-		}
-		sb.WriteString("],\n")
+	// Create the templ component.
+	templComponent := art.ToJsonLd()
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
 	}
-
-	// Author
-	if art.Author != nil {
-		sb.WriteString(`  "author": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "Person", "name": "%s"`, html.EscapeString(art.Author.Name)))
-		if art.Author.URL != "" {
-			sb.WriteString(fmt.Sprintf(`, "url": "%s"`, html.EscapeString(art.Author.URL)))
-		}
-		sb.WriteString("},\n")
-	}
-
-	// Publisher
-	if art.Publisher != nil {
-		sb.WriteString(`  "publisher": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "Organization", "name": "%s"`, html.EscapeString(art.Publisher.Name)))
-		if art.Publisher.URL != "" {
-			sb.WriteString(fmt.Sprintf(`, "url": "%s"`, html.EscapeString(art.Publisher.URL)))
-		}
-		if art.Publisher.Logo != nil {
-			sb.WriteString(`, "logo": {`)
-			sb.WriteString(fmt.Sprintf(`"@type": "ImageObject", "url": "%s"`, html.EscapeString(art.Publisher.Logo.URL)))
-			sb.WriteString("}")
-		}
-		sb.WriteString("},\n")
-	}
-
-	// Dates and Description
-	if art.DatePublished != "" {
-		sb.WriteString(fmt.Sprintf(`  "datePublished": "%s",`, html.EscapeString(art.DatePublished)))
-		sb.WriteString("\n")
-	}
-	if art.DateModified != "" {
-		sb.WriteString(fmt.Sprintf(`  "dateModified": "%s",`, html.EscapeString(art.DateModified)))
-		sb.WriteString("\n")
-	}
-	if art.Description != "" {
-		sb.WriteString(fmt.Sprintf(`  "description": "%s"`, html.EscapeString(art.Description)))
-		sb.WriteString("\n")
-	}
-
-	sb.WriteString("}\n</script>")
-	return sb.String()
+	return string(html), nil
 }
 
 func (art *Article) ensureDefaults() {

@@ -2,10 +2,8 @@ package schemaorg
 
 import (
 	"context"
-	"fmt"
-	"html"
 	"io"
-	"strings"
+	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -111,36 +109,16 @@ func (fp *FAQPage) ToJsonLd() templ.Component {
 }
 
 // ToGoHTMLJsonLd renders the FAQPage struct as a string for Go's `html/template`.
-func (fp *FAQPage) ToGoHTMLJsonLd() string {
+func (fp *FAQPage) ToGoHTMLJsonLd() (string, error) {
 	fp.ensureDefaults()
-
-	var sb strings.Builder
-	sb.WriteString(`<script type="application/ld+json">`)
-	sb.WriteString("\n{\n")
-	sb.WriteString(fmt.Sprintf(`  "@context": "%s",`, html.EscapeString(fp.Context)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "@type": "%s",`, html.EscapeString(fp.Type)))
-	sb.WriteString("\n")
-	sb.WriteString(`  "mainEntity": [`)
-
-	for i, question := range fp.MainEntity {
-		if i > 0 {
-			sb.WriteString(", ")
-		}
-		sb.WriteString("{\n")
-		sb.WriteString(`    "@type": "Question",`)
-		sb.WriteString(fmt.Sprintf(`"name": "%s",`, html.EscapeString(question.Name)))
-		if question.AcceptedAnswer != nil {
-			sb.WriteString(`    "acceptedAnswer": {`)
-			sb.WriteString(fmt.Sprintf(`"@type": "Answer", "text": "%s"`, html.EscapeString(question.AcceptedAnswer.Text)))
-			sb.WriteString("}")
-		}
-		sb.WriteString("\n}")
+	// Create the templ component.
+	templComponent := fp.ToJsonLd()
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
 	}
-
-	sb.WriteString("\n  ]\n")
-	sb.WriteString("}\n</script>")
-	return sb.String()
+	return string(html), nil
 }
 
 // ensureDefaults sets default values for FAQPage, Question, and Answer if they are not already set.

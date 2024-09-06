@@ -2,10 +2,8 @@ package schemaorg
 
 import (
 	"context"
-	"fmt"
-	"html"
 	"io"
-	"strings"
+	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -111,24 +109,16 @@ func (wp *WebPage) ToJsonLd() templ.Component {
 }
 
 // ToGoHTMLJsonLd renders the WebSite struct as a string for Go's `html/template`.
-func (wp *WebPage) ToGoHTMLJsonLd() string {
+func (wp *WebPage) ToGoHTMLJsonLd() (string, error) {
 	wp.ensureDefaults()
-
-	var sb strings.Builder
-	sb.WriteString(`<script type="application/ld+json">`)
-	sb.WriteString("\n{\n")
-	sb.WriteString(fmt.Sprintf(`  "@context": "%s",`, html.EscapeString(wp.Context)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "@type": "%s",`, html.EscapeString(wp.Type)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "url": "%s",`, html.EscapeString(wp.URL)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "name": "%s",`, html.EscapeString(wp.Name)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "description": "%s"`, html.EscapeString(wp.Description)))
-	sb.WriteString("\n}\n</script>")
-
-	return sb.String()
+	// Create the templ component.
+	templComponent := wp.ToJsonLd()
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
+	}
+	return string(html), nil
 }
 
 func (wp *WebPage) ensureDefaults() {

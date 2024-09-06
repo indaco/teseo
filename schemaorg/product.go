@@ -2,10 +2,8 @@ package schemaorg
 
 import (
 	"context"
-	"fmt"
-	"html"
 	"io"
-	"strings"
+	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -139,123 +137,16 @@ func (p *Product) ToJsonLd() templ.Component {
 }
 
 // ToGoHTMLJsonLd renders the Product struct as a string for Go's `html/template`.
-func (p *Product) ToGoHTMLJsonLd() string {
+func (p *Product) ToGoHTMLJsonLd() (string, error) {
 	p.ensureDefaults()
-
-	var sb strings.Builder
-	sb.WriteString(`<script type="application/ld+json">`)
-	sb.WriteString("\n{\n")
-	sb.WriteString(fmt.Sprintf(`  "@context": "%s",`, html.EscapeString(p.Context)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "@type": "%s",`, html.EscapeString(p.Type)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "name": "%s",`, html.EscapeString(p.Name)))
-	sb.WriteString("\n")
-
-	writeProductDescription(&sb, p)
-	writeProductImages(&sb, p)
-	writeProductSKU(&sb, p)
-	writeProductBrand(&sb, p)
-	writeProductOffers(&sb, p)
-	writeProductCategory(&sb, p)
-	writeProductAggregateRating(&sb, p)
-	writeProductReviews(&sb, p)
-
-	sb.WriteString("}\n</script>")
-	return sb.String()
-}
-
-func writeProductDescription(sb *strings.Builder, p *Product) {
-	if p.Description != "" {
-		sb.WriteString(fmt.Sprintf(`  "description": "%s",`, html.EscapeString(p.Description)))
-		sb.WriteString("\n")
+	// Create the templ component.
+	templComponent := p.ToJsonLd()
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
 	}
-}
-
-func writeProductImages(sb *strings.Builder, p *Product) {
-	if len(p.Image) > 0 {
-		sb.WriteString(`  "image": [`)
-		for i, img := range p.Image {
-			if i > 0 {
-				sb.WriteString(", ")
-			}
-			sb.WriteString(fmt.Sprintf(`"%s"`, html.EscapeString(img)))
-		}
-		sb.WriteString("],\n")
-	}
-}
-
-func writeProductSKU(sb *strings.Builder, p *Product) {
-	if p.SKU != "" {
-		sb.WriteString(fmt.Sprintf(`  "sku": "%s",`, html.EscapeString(p.SKU)))
-		sb.WriteString("\n")
-	}
-}
-
-func writeProductBrand(sb *strings.Builder, p *Product) {
-	if p.Brand != nil {
-		sb.WriteString(`  "brand": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "Brand", "name": "%s"`, html.EscapeString(p.Brand.Name)))
-		sb.WriteString("},\n")
-	}
-}
-
-func writeProductOffers(sb *strings.Builder, p *Product) {
-	if p.Offers != nil {
-		sb.WriteString(`  "offers": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "Offer", "price": "%s", "priceCurrency": "%s"`, html.EscapeString(p.Offers.Price), html.EscapeString(p.Offers.PriceCurrency)))
-		if p.Offers.URL != "" {
-			sb.WriteString(fmt.Sprintf(`, "url": "%s"`, html.EscapeString(p.Offers.URL)))
-		}
-		if p.Offers.Availability != "" {
-			sb.WriteString(fmt.Sprintf(`, "availability": "%s"`, html.EscapeString(p.Offers.Availability)))
-		}
-		if p.Offers.ItemCondition != "" {
-			sb.WriteString(fmt.Sprintf(`, "itemCondition": "%s"`, html.EscapeString(p.Offers.ItemCondition)))
-		}
-		sb.WriteString("},\n")
-	}
-}
-
-func writeProductCategory(sb *strings.Builder, p *Product) {
-	if p.Category != "" {
-		sb.WriteString(fmt.Sprintf(`  "category": "%s",`, html.EscapeString(p.Category)))
-		sb.WriteString("\n")
-	}
-}
-
-func writeProductAggregateRating(sb *strings.Builder, p *Product) {
-	if p.AggregateRating != nil {
-		sb.WriteString(`  "aggregateRating": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "AggregateRating", "ratingValue": %f, "reviewCount": %d`, p.AggregateRating.RatingValue, p.AggregateRating.ReviewCount))
-		sb.WriteString("},\n")
-	}
-}
-
-func writeProductReviews(sb *strings.Builder, p *Product) {
-	if len(p.Review) > 0 {
-		sb.WriteString(`  "review": [`)
-		for i, review := range p.Review {
-			if i > 0 {
-				sb.WriteString(", ")
-			}
-			sb.WriteString("{\n")
-			sb.WriteString(fmt.Sprintf(`    "@type": "Review", "reviewBody": "%s",`, html.EscapeString(review.ReviewBody)))
-			sb.WriteString(fmt.Sprintf(`"datePublished": "%s",`, html.EscapeString(review.DatePublished)))
-			if review.Author != nil {
-				sb.WriteString(`    "author": {`)
-				sb.WriteString(fmt.Sprintf(`"@type": "Person", "name": "%s"`, html.EscapeString(review.Author.Name)))
-				sb.WriteString("},\n")
-			}
-			if review.ReviewRating != nil {
-				sb.WriteString(`    "reviewRating": {`)
-				sb.WriteString(fmt.Sprintf(`"@type": "Rating", "ratingValue": %f, "bestRating": %f`, review.ReviewRating.RatingValue, review.ReviewRating.BestRating))
-				sb.WriteString("}\n")
-			}
-			sb.WriteString("}")
-		}
-		sb.WriteString("],\n")
-	}
+	return string(html), nil
 }
 
 // ensureDefaults sets default values for Product and its nested objects if they are not already set.

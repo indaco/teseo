@@ -2,10 +2,8 @@ package schemaorg
 
 import (
 	"context"
-	"fmt"
-	"html"
 	"io"
-	"strings"
+	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -69,57 +67,16 @@ func (org *Organization) ToJsonLd() templ.Component {
 }
 
 // ToGoHTMLJsonLd renders the Organization struct as a string for Go's `html/template`.
-func (o *Organization) ToGoHTMLJsonLd() string {
-	o.ensureDefaults()
-
-	var sb strings.Builder
-	sb.WriteString(`<script type="application/ld+json">`)
-	sb.WriteString("\n{\n")
-	sb.WriteString(fmt.Sprintf(`  "@context": "%s",`, html.EscapeString(o.Context)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "@type": "%s",`, html.EscapeString(o.Type)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "name": "%s",`, html.EscapeString(o.Name)))
-	sb.WriteString("\n")
-	if o.URL != "" {
-		sb.WriteString(fmt.Sprintf(`  "url": "%s",`, html.EscapeString(o.URL)))
-		sb.WriteString("\n")
+func (org *Organization) ToGoHTMLJsonLd() (string, error) {
+	org.ensureDefaults()
+	// Create the templ component.
+	templComponent := org.ToJsonLd()
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
 	}
-	if o.Logo != nil {
-		sb.WriteString(`  "logo": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "ImageObject", "url": "%s"`, html.EscapeString(o.Logo.URL)))
-		sb.WriteString("},\n")
-	}
-	if len(o.ContactPoints) > 0 {
-		sb.WriteString(`  "contactPoint": [`)
-		for i, cp := range o.ContactPoints {
-			if i > 0 {
-				sb.WriteString(", ")
-			}
-			sb.WriteString("{\n")
-			sb.WriteString(fmt.Sprintf(`    "@type": "ContactPoint", "telephone": "%s", "contactType": "%s"`, html.EscapeString(cp.Telephone), html.EscapeString(cp.ContactType)))
-			if cp.AreaServed != "" {
-				sb.WriteString(fmt.Sprintf(`, "areaServed": "%s"`, html.EscapeString(cp.AreaServed)))
-			}
-			if cp.AvailableLanguage != "" {
-				sb.WriteString(fmt.Sprintf(`, "availableLanguage": "%s"`, html.EscapeString(cp.AvailableLanguage)))
-			}
-			sb.WriteString("\n}")
-		}
-		sb.WriteString("],\n")
-	}
-	if len(o.SameAs) > 0 {
-		sb.WriteString(`  "sameAs": [`)
-		for i, sameAs := range o.SameAs {
-			if i > 0 {
-				sb.WriteString(", ")
-			}
-			sb.WriteString(fmt.Sprintf(`"%s"`, html.EscapeString(sameAs)))
-		}
-		sb.WriteString("],\n")
-	}
-	sb.WriteString("}\n</script>")
-	return sb.String()
+	return string(html), nil
 }
 
 // Person represents a Schema.org Person object

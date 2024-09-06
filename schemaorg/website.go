@@ -2,10 +2,8 @@ package schemaorg
 
 import (
 	"context"
-	"fmt"
-	"html"
 	"io"
-	"strings"
+	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -99,48 +97,16 @@ func (ws *WebSite) ToJsonLd() templ.Component {
 }
 
 // ToGoHTMLJsonLd renders the WebSite struct as a string for Go's `html/template`.
-func (ws *WebSite) ToGoHTMLJsonLd() string {
+func (ws *WebSite) ToGoHTMLJsonLd() (string, error) {
 	ws.ensureDefaults()
-
-	var sb strings.Builder
-	sb.WriteString(`<script type="application/ld+json">`)
-	sb.WriteString("\n{\n")
-	sb.WriteString(fmt.Sprintf(`  "@context": "%s",`, html.EscapeString(ws.Context)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "@type": "%s",`, html.EscapeString(ws.Type)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "url": "%s",`, html.EscapeString(ws.URL)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "name": "%s",`, html.EscapeString(ws.Name)))
-	sb.WriteString("\n")
-	if ws.AlternateName != "" {
-		sb.WriteString(fmt.Sprintf(`  "alternateName": "%s",`, html.EscapeString(ws.AlternateName)))
-		sb.WriteString("\n")
+	// Create the templ component.
+	templComponent := ws.ToJsonLd()
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
 	}
-	if ws.Description != "" {
-		sb.WriteString(fmt.Sprintf(`  "description": "%s",`, html.EscapeString(ws.Description)))
-		sb.WriteString("\n")
-	}
-	if ws.PotentialAction != nil {
-		sb.WriteString(`  "potentialAction": {\n`)
-		sb.WriteString(fmt.Sprintf(`    "@type": "%s",`, html.EscapeString(ws.PotentialAction.Type)))
-		sb.WriteString("\n")
-		if ws.PotentialAction.Target != nil {
-			sb.WriteString(`    "target": {\n`)
-			sb.WriteString(fmt.Sprintf(`      "@type": "%s",`, html.EscapeString(ws.PotentialAction.Target.Type)))
-			sb.WriteString("\n")
-			sb.WriteString(fmt.Sprintf(`      "urlTemplate": "%s"`, html.EscapeString(ws.PotentialAction.Target.URLTemplate)))
-			sb.WriteString("\n    },\n")
-		}
-		if ws.PotentialAction.QueryInput != "" {
-			sb.WriteString(fmt.Sprintf(`    "query-input": "%s"`, html.EscapeString(ws.PotentialAction.QueryInput)))
-			sb.WriteString("\n")
-		}
-		sb.WriteString("  },\n")
-	}
-	sb.WriteString("}\n</script>")
-
-	return sb.String()
+	return string(html), nil
 }
 
 func (ws *WebSite) ensureDefaults() {

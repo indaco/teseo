@@ -2,10 +2,8 @@ package schemaorg
 
 import (
 	"context"
-	"fmt"
-	"html"
 	"io"
-	"strings"
+	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -108,115 +106,16 @@ func (lb *LocalBusiness) ToJsonLd() templ.Component {
 }
 
 // ToGoHTMLJsonLd renders the LocalBusiness struct as a string for Go's `html/template`.
-func (lb *LocalBusiness) ToGoHTMLJsonLd() string {
+func (lb *LocalBusiness) ToGoHTMLJsonLd() (string, error) {
 	lb.ensureDefaults()
-
-	var sb strings.Builder
-	sb.WriteString(`<script type="application/ld+json">`)
-	sb.WriteString("\n{\n")
-	sb.WriteString(fmt.Sprintf(`  "@context": "%s",`, html.EscapeString(lb.Context)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "@type": "%s",`, html.EscapeString(lb.Type)))
-	sb.WriteString("\n")
-	sb.WriteString(fmt.Sprintf(`  "name": "%s",`, html.EscapeString(lb.Name)))
-	sb.WriteString("\n")
-
-	writeOptionalFields(&sb, lb)
-	writeLogo(&sb, lb)
-	writeAddress(&sb, lb)
-	writeOpeningHours(&sb, lb)
-	writeGeo(&sb, lb)
-	writeAggregateRating(&sb, lb)
-	writeReviews(&sb, lb)
-
-	sb.WriteString("}\n</script>")
-	return sb.String()
-}
-
-func writeOptionalFields(sb *strings.Builder, lb *LocalBusiness) {
-	if lb.Description != "" {
-		sb.WriteString(fmt.Sprintf(`  "description": "%s",`, html.EscapeString(lb.Description)))
-		sb.WriteString("\n")
+	// Create the templ component.
+	templComponent := lb.ToJsonLd()
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
 	}
-	if lb.URL != "" {
-		sb.WriteString(fmt.Sprintf(`  "url": "%s",`, html.EscapeString(lb.URL)))
-		sb.WriteString("\n")
-	}
-	if lb.Telephone != "" {
-		sb.WriteString(fmt.Sprintf(`  "telephone": "%s",`, html.EscapeString(lb.Telephone)))
-		sb.WriteString("\n")
-	}
-}
-
-func writeLogo(sb *strings.Builder, lb *LocalBusiness) {
-	if lb.Logo != nil {
-		sb.WriteString(`  "logo": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "ImageObject", "url": "%s"`, html.EscapeString(lb.Logo.URL)))
-		sb.WriteString("},\n")
-	}
-}
-
-func writeAddress(sb *strings.Builder, lb *LocalBusiness) {
-	if lb.Address != nil {
-		sb.WriteString(`  "address": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "PostalAddress", "addressLocality": "%s", "addressCountry": "%s"`, html.EscapeString(lb.Address.AddressLocality), html.EscapeString(lb.Address.AddressCountry)))
-		sb.WriteString("},\n")
-	}
-}
-
-func writeOpeningHours(sb *strings.Builder, lb *LocalBusiness) {
-	if len(lb.OpeningHours) > 0 {
-		sb.WriteString(`  "openingHours": [`)
-		for i, hours := range lb.OpeningHours {
-			if i > 0 {
-				sb.WriteString(", ")
-			}
-			sb.WriteString(fmt.Sprintf(`"%s"`, html.EscapeString(hours)))
-		}
-		sb.WriteString("],\n")
-	}
-}
-
-func writeGeo(sb *strings.Builder, lb *LocalBusiness) {
-	if lb.Geo != nil {
-		sb.WriteString(`  "geo": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "GeoCoordinates", "latitude": %f, "longitude": %f`, lb.Geo.Latitude, lb.Geo.Longitude))
-		sb.WriteString("},\n")
-	}
-}
-
-func writeAggregateRating(sb *strings.Builder, lb *LocalBusiness) {
-	if lb.AggregateRating != nil {
-		sb.WriteString(`  "aggregateRating": {`)
-		sb.WriteString(fmt.Sprintf(`"@type": "AggregateRating", "ratingValue": %f, "reviewCount": %d`, lb.AggregateRating.RatingValue, lb.AggregateRating.ReviewCount))
-		sb.WriteString("},\n")
-	}
-}
-
-func writeReviews(sb *strings.Builder, lb *LocalBusiness) {
-	if len(lb.Review) > 0 {
-		sb.WriteString(`  "review": [`)
-		for i, review := range lb.Review {
-			if i > 0 {
-				sb.WriteString(", ")
-			}
-			sb.WriteString("{\n")
-			sb.WriteString(fmt.Sprintf(`    "@type": "Review", "reviewBody": "%s",`, html.EscapeString(review.ReviewBody)))
-			sb.WriteString(fmt.Sprintf(`"datePublished": "%s",`, html.EscapeString(review.DatePublished)))
-			if review.Author != nil {
-				sb.WriteString(`    "author": {`)
-				sb.WriteString(fmt.Sprintf(`"@type": "Person", "name": "%s"`, html.EscapeString(review.Author.Name)))
-				sb.WriteString("},\n")
-			}
-			if review.ReviewRating != nil {
-				sb.WriteString(`    "reviewRating": {`)
-				sb.WriteString(fmt.Sprintf(`"@type": "Rating", "ratingValue": %f, "bestRating": %f`, review.ReviewRating.RatingValue, review.ReviewRating.BestRating))
-				sb.WriteString("}\n")
-			}
-			sb.WriteString("}")
-		}
-		sb.WriteString("],\n")
-	}
+	return string(html), nil
 }
 
 // ensureDefaults sets default values for LocalBusiness and its nested objects if they are not already set.
