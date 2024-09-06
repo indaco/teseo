@@ -2,6 +2,7 @@ package schemaorg
 
 import (
 	"context"
+	"html/template"
 	"io"
 	"log"
 
@@ -106,8 +107,8 @@ func (e *Event) ToJsonLd() templ.Component {
 	})
 }
 
-// ToGoHTMLJsonLd renders the Event struct as a string for Go's `html/template`.
-func (e *Event) ToGoHTMLJsonLd() (string, error) {
+// ToGoHTMLJsonLd renders the Event struct as `template.HTML` value for Go's `html/template`.
+func (e *Event) ToGoHTMLJsonLd() (template.HTML, error) {
 	e.ensureDefaults()
 
 	// Create the templ component.
@@ -119,7 +120,7 @@ func (e *Event) ToGoHTMLJsonLd() (string, error) {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
 
-	return string(html), nil
+	return html, nil
 }
 
 // ensureDefaults sets default values for Event and its nested objects if they are not already set.

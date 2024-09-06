@@ -3,6 +3,7 @@ package schemaorg
 import (
 	"context"
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"net/url"
@@ -104,8 +105,8 @@ func (bcl *BreadcrumbList) ToJsonLd() templ.Component {
 	})
 }
 
-// ToGoHTMLJsonLd renders the BreadcrumbList struct as a string for Go's `html/template`.
-func (bcl *BreadcrumbList) ToGoHTMLJsonLd() (string, error) {
+// ToGoHTMLJsonLd renders the BreadcrumbList struct as `template.HTML` value for Go's `html/template`.
+func (bcl *BreadcrumbList) ToGoHTMLJsonLd() (template.HTML, error) {
 	bcl.ensureDefaults()
 
 	// Create the templ component.
@@ -117,7 +118,7 @@ func (bcl *BreadcrumbList) ToGoHTMLJsonLd() (string, error) {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
 
-	return string(html), nil
+	return html, nil
 }
 
 func (bcl *BreadcrumbList) ensureDefaults() {

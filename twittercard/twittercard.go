@@ -2,9 +2,9 @@ package twittercard
 
 import (
 	"context"
-	"fmt"
+	"html/template"
 	"io"
-	"strings"
+	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -284,23 +284,20 @@ func (tc *TwitterCard) ToMetaTags() templ.Component {
 	})
 }
 
-// ToGoHTMLMetaTags generates the HTML meta tags for the Twitter Card as a string for Go's html/template
-func (tc *TwitterCard) ToGoHTMLMetaTags() string {
+// ToGoHTMLMetaTags generates the HTML meta tags for the Twitter Card as `template.HTML` value for Go's html/template
+func (tc *TwitterCard) ToGoHTMLMetaTags() (template.HTML, error) {
 	tc.ensureDefaults()
 
-	var sb strings.Builder
-	// Helper function to write each meta tag to the string builder
-	writeMetaTag := func(name, content string) {
-		if content != "" {
-			sb.WriteString(fmt.Sprintf(`<meta name="%s" content="%s"/>`, name, content))
-			sb.WriteString("\n")
-		}
+	// Create the templ component.
+	templComponent := tc.ToMetaTags()
+
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
 	}
 
-	for _, tag := range tc.metaTags() {
-		writeMetaTag(tag.name, tag.content)
-	}
-	return sb.String()
+	return html, nil
 }
 
 // metaTags returns the meta tags for the Twitter Card as a slice of name-content pairs

@@ -2,6 +2,7 @@ package schemaorg
 
 import (
 	"context"
+	"html/template"
 	"io"
 	"log"
 
@@ -108,8 +109,8 @@ func (wp *WebPage) ToJsonLd() templ.Component {
 	})
 }
 
-// ToGoHTMLJsonLd renders the WebSite struct as a string for Go's `html/template`.
-func (wp *WebPage) ToGoHTMLJsonLd() (string, error) {
+// ToGoHTMLJsonLd renders the WebSite struct as `template.HTML` value for Go's `html/template`.
+func (wp *WebPage) ToGoHTMLJsonLd() (template.HTML, error) {
 	wp.ensureDefaults()
 
 	// Create the templ component.
@@ -121,7 +122,7 @@ func (wp *WebPage) ToGoHTMLJsonLd() (string, error) {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
 
-	return string(html), nil
+	return html, nil
 }
 
 func (wp *WebPage) ensureDefaults() {

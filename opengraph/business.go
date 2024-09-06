@@ -2,9 +2,9 @@ package opengraph
 
 import (
 	"context"
-	"fmt"
+	"html/template"
 	"io"
-	"strings"
+	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -126,20 +126,20 @@ func (bus *Business) ToMetaTags() templ.Component {
 	})
 }
 
-// ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Business as a string for Go's `html/template`.
-func (bus *Business) ToGoHTMLMetaTags() string {
+// ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Business as `template.HTML` value for Go's `html/template`.
+func (bus *Business) ToGoHTMLMetaTags() (template.HTML, error) {
 	bus.ensureDefaults()
 
-	var sb strings.Builder
+	// Create the templ component.
+	templComponent := bus.ToMetaTags()
 
-	for _, tag := range bus.metaTags() {
-		if tag.content != "" {
-			sb.WriteString(fmt.Sprintf(`<meta property="%s" content="%s"/>`, tag.property, tag.content))
-			sb.WriteString("\n")
-		}
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
 	}
 
-	return sb.String()
+	return html, nil
 }
 
 // ensureDefaults sets default values for Business.

@@ -2,6 +2,7 @@ package schemaorg
 
 import (
 	"context"
+	"html/template"
 	"io"
 	"log"
 
@@ -105,8 +106,8 @@ func (lb *LocalBusiness) ToJsonLd() templ.Component {
 	})
 }
 
-// ToGoHTMLJsonLd renders the LocalBusiness struct as a string for Go's `html/template`.
-func (lb *LocalBusiness) ToGoHTMLJsonLd() (string, error) {
+// ToGoHTMLJsonLd renders the LocalBusiness struct as `template.HTML` value for Go's `html/template`.
+func (lb *LocalBusiness) ToGoHTMLJsonLd() (template.HTML, error) {
 	lb.ensureDefaults()
 
 	// Create the templ component.
@@ -118,7 +119,7 @@ func (lb *LocalBusiness) ToGoHTMLJsonLd() (string, error) {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
 
-	return string(html), nil
+	return html, nil
 }
 
 // ensureDefaults sets default values for LocalBusiness and its nested objects if they are not already set.

@@ -2,9 +2,9 @@ package opengraph
 
 import (
 	"context"
-	"fmt"
+	"html/template"
 	"io"
-	"strings"
+	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -105,20 +105,20 @@ func (ms *MusicSong) ToMetaTags() templ.Component {
 	})
 }
 
-// ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Music Song as a string for Go's `html/template`.
-func (ms *MusicSong) ToGoHTMLMetaTags() string {
+// ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Music Song as `template.HTML` value for Go's `html/template`.
+func (ms *MusicSong) ToGoHTMLMetaTags() (template.HTML, error) {
 	ms.ensureDefaults()
 
-	var sb strings.Builder
+	// Create the templ component.
+	templComponent := ms.ToMetaTags()
 
-	for _, tag := range ms.metaTags() {
-		if tag.content != "" {
-			sb.WriteString(fmt.Sprintf(`<meta property="%s" content="%s"/>`, tag.property, tag.content))
-			sb.WriteString("\n")
-		}
+	// Render the templ component to a `template.HTML` value.
+	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	if err != nil {
+		log.Fatalf("failed to convert to html: %v", err)
 	}
 
-	return sb.String()
+	return html, nil
 }
 
 // ensureDefaults sets default values for MusicSong.

@@ -2,6 +2,7 @@ package schemaorg
 
 import (
 	"context"
+	"html/template"
 	"io"
 	"log"
 
@@ -95,8 +96,8 @@ func (art *Article) ToJsonLd() templ.Component {
 	})
 }
 
-// ToGoHTMLJsonLd renders the Article struct as a string for Go's `html/template`.
-func (art *Article) ToGoHTMLJsonLd() (string, error) {
+// ToGoHTMLJsonLd renders the Article struct as `template.HTML` value for Go's `html/template`.
+func (art *Article) ToGoHTMLJsonLd() (template.HTML, error) {
 	art.ensureDefaults()
 
 	// Create the templ component.
@@ -108,7 +109,7 @@ func (art *Article) ToGoHTMLJsonLd() (string, error) {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
 
-	return string(html), nil
+	return html, nil
 }
 
 func (art *Article) ensureDefaults() {

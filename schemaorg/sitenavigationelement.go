@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
+	"html/template"
 	"io"
 	"log"
 	"os"
@@ -203,8 +204,8 @@ func (sne *SiteNavigationElement) ToJsonLd() templ.Component {
 	})
 }
 
-// ToGoHTMLJsonLd renders the SiteNavigationElement struct as a string for Go's `html/template`.
-func (sne *SiteNavigationElement) ToGoHTMLJsonLd() (string, error) {
+// ToGoHTMLJsonLd renders the SiteNavigationElement struct as `template.HTML` value for Go's `html/template`.
+func (sne *SiteNavigationElement) ToGoHTMLJsonLd() (template.HTML, error) {
 	sne.ensureDefaults()
 
 	// Create the templ component.
@@ -216,7 +217,7 @@ func (sne *SiteNavigationElement) ToGoHTMLJsonLd() (string, error) {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
 
-	return string(html), nil
+	return html, nil
 }
 
 // ToSitemapFile generates a sitemap XML file from the SiteNavigationElement struct.

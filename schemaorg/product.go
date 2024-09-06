@@ -2,6 +2,7 @@ package schemaorg
 
 import (
 	"context"
+	"html/template"
 	"io"
 	"log"
 
@@ -136,8 +137,8 @@ func (p *Product) ToJsonLd() templ.Component {
 	})
 }
 
-// ToGoHTMLJsonLd renders the Product struct as a string for Go's `html/template`.
-func (p *Product) ToGoHTMLJsonLd() (string, error) {
+// ToGoHTMLJsonLd renders the Product struct as `template.HTML` value for Go's `html/template`.
+func (p *Product) ToGoHTMLJsonLd() (template.HTML, error) {
 	p.ensureDefaults()
 
 	// Create the templ component.
@@ -149,7 +150,7 @@ func (p *Product) ToGoHTMLJsonLd() (string, error) {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
 
-	return string(html), nil
+	return html, nil
 }
 
 // ensureDefaults sets default values for Product and its nested objects if they are not already set.

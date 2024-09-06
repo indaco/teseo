@@ -2,6 +2,7 @@ package schemaorg
 
 import (
 	"context"
+	"html/template"
 	"io"
 	"log"
 
@@ -108,8 +109,8 @@ func (fp *FAQPage) ToJsonLd() templ.Component {
 	})
 }
 
-// ToGoHTMLJsonLd renders the FAQPage struct as a string for Go's `html/template`.
-func (fp *FAQPage) ToGoHTMLJsonLd() (string, error) {
+// ToGoHTMLJsonLd renders the FAQPage struct as`template.HTML` value for Go's `html/template`.
+func (fp *FAQPage) ToGoHTMLJsonLd() (template.HTML, error) {
 	fp.ensureDefaults()
 
 	// Create the templ component.
@@ -121,7 +122,7 @@ func (fp *FAQPage) ToGoHTMLJsonLd() (string, error) {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
 
-	return string(html), nil
+	return html, nil
 }
 
 // ensureDefaults sets default values for FAQPage, Question, and Answer if they are not already set.
