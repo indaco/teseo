@@ -81,7 +81,7 @@ Whether you are looking to implement _Schema.org JSON-LD_, _OpenGraph_, or _Twit
 
 Add this package to your project:
 
-```sh
+```bash
 go get github.com/indaco/teseo@latest
 ```
 
