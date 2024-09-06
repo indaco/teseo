@@ -1,16 +1,31 @@
 package posts
 
-import "github.com/indaco/teseo/_demos/pages/partials"
+import (
+	"github.com/indaco/teseo/_demos/pages/partials"
+	"github.com/indaco/teseo/schemaorg"
+)
 
 templ FirstPostPage() {
+	{{
+		article := &schemaorg.Article{
+			Headline:      "First Post Headline",
+			Image:         []string{"https://placehold.co/600x400?text=JD"},
+			Author:        &schemaorg.Person{Name: "Jane Doe"},
+			Publisher:     &schemaorg.Organization{Name: "Example Publisher"},
+			DatePublished: "2024-09-15",
+			DateModified:  "2024-09-16",
+			Description:   "Lorem ipsum dolor, sit amet consectetur adipisicing elit.",
+		}
+	}}
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>teseo- blog</title>
+			<title>teseo- First Post</title>
 			<link rel="stylesheet" type="text/css" href="/statics/styles.css"/>
 			@partials.SEO() {
+				@article.ToJsonLd()
 			}
 		</head>
 		<body>

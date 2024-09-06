@@ -8,7 +8,10 @@ package posts
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/indaco/teseo/_demos/pages/partials"
+import (
+	"github.com/indaco/teseo/_demos/pages/partials"
+	"github.com/indaco/teseo/schemaorg"
+)
 
 func FirstPostPage() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -28,7 +31,17 @@ func FirstPostPage() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>teseo- blog</title><link rel=\"stylesheet\" type=\"text/css\" href=\"/statics/styles.css\">")
+
+		article := &schemaorg.Article{
+			Headline:      "First Post Headline",
+			Image:         []string{"https://placehold.co/600x400?text=JD"},
+			Author:        &schemaorg.Person{Name: "Jane Doe"},
+			Publisher:     &schemaorg.Organization{Name: "Example Publisher"},
+			DatePublished: "2024-09-15",
+			DateModified:  "2024-09-16",
+			Description:   "Lorem ipsum dolor, sit amet consectetur adipisicing elit.",
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>teseo- First Post</title><link rel=\"stylesheet\" type=\"text/css\" href=\"/statics/styles.css\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -44,6 +57,10 @@ func FirstPostPage() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = article.ToJsonLd().Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 			return templ_7745c5c3_Err
 		})
 		templ_7745c5c3_Err = partials.SEO().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
