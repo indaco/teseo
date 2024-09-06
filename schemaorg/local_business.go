@@ -108,13 +108,16 @@ func (lb *LocalBusiness) ToJsonLd() templ.Component {
 // ToGoHTMLJsonLd renders the LocalBusiness struct as a string for Go's `html/template`.
 func (lb *LocalBusiness) ToGoHTMLJsonLd() (string, error) {
 	lb.ensureDefaults()
+
 	// Create the templ component.
 	templComponent := lb.ToJsonLd()
+
 	// Render the templ component to a `template.HTML` value.
 	html, err := templ.ToGoHTML(context.Background(), templComponent)
 	if err != nil {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
+
 	return string(html), nil
 }
 
@@ -123,6 +126,7 @@ func (lb *LocalBusiness) ensureDefaults() {
 	if lb.Context == "" {
 		lb.Context = "https://schema.org"
 	}
+
 	if lb.Type == "" {
 		lb.Type = "LocalBusiness"
 	}

@@ -206,13 +206,16 @@ func (sne *SiteNavigationElement) ToJsonLd() templ.Component {
 // ToGoHTMLJsonLd renders the SiteNavigationElement struct as a string for Go's `html/template`.
 func (sne *SiteNavigationElement) ToGoHTMLJsonLd() (string, error) {
 	sne.ensureDefaults()
+
 	// Create the templ component.
 	templComponent := sne.ToJsonLd()
+
 	// Render the templ component to a `template.HTML` value.
 	html, err := templ.ToGoHTML(context.Background(), templComponent)
 	if err != nil {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
+
 	return string(html), nil
 }
 

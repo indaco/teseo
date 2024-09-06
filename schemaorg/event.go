@@ -109,13 +109,16 @@ func (e *Event) ToJsonLd() templ.Component {
 // ToGoHTMLJsonLd renders the Event struct as a string for Go's `html/template`.
 func (e *Event) ToGoHTMLJsonLd() (string, error) {
 	e.ensureDefaults()
+
 	// Create the templ component.
 	templComponent := e.ToJsonLd()
+
 	// Render the templ component to a `template.HTML` value.
 	html, err := templ.ToGoHTML(context.Background(), templComponent)
 	if err != nil {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
+
 	return string(html), nil
 }
 
@@ -124,6 +127,7 @@ func (e *Event) ensureDefaults() {
 	if e.Context == "" {
 		e.Context = "https://schema.org"
 	}
+
 	if e.Type == "" {
 		e.Type = "Event"
 	}

@@ -111,13 +111,16 @@ func (wp *WebPage) ToJsonLd() templ.Component {
 // ToGoHTMLJsonLd renders the WebSite struct as a string for Go's `html/template`.
 func (wp *WebPage) ToGoHTMLJsonLd() (string, error) {
 	wp.ensureDefaults()
+
 	// Create the templ component.
 	templComponent := wp.ToJsonLd()
+
 	// Render the templ component to a `template.HTML` value.
 	html, err := templ.ToGoHTML(context.Background(), templComponent)
 	if err != nil {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
+
 	return string(html), nil
 }
 
@@ -125,6 +128,7 @@ func (wp *WebPage) ensureDefaults() {
 	if wp.Context == "" {
 		wp.Context = "https://schema.org"
 	}
+
 	if wp.Type == "" {
 		wp.Type = "WebPage"
 	}

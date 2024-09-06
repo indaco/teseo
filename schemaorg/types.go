@@ -69,13 +69,16 @@ func (org *Organization) ToJsonLd() templ.Component {
 // ToGoHTMLJsonLd renders the Organization struct as a string for Go's `html/template`.
 func (org *Organization) ToGoHTMLJsonLd() (string, error) {
 	org.ensureDefaults()
+
 	// Create the templ component.
 	templComponent := org.ToJsonLd()
+
 	// Render the templ component to a `template.HTML` value.
 	html, err := templ.ToGoHTML(context.Background(), templComponent)
 	if err != nil {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
+
 	return string(html), nil
 }
 

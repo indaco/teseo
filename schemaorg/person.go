@@ -101,13 +101,16 @@ func (p *Person) ToJsonLd() templ.Component {
 // ToGoHTMLJsonLd renders the Person struct as a string for Go's `html/template`.
 func (p *Person) ToGoHTMLJsonLd() (string, error) {
 	p.ensureDefaults()
+
 	// Create the templ component.
 	templComponent := p.ToJsonLd()
+
 	// Render the templ component to a `template.HTML` value.
 	html, err := templ.ToGoHTML(context.Background(), templComponent)
 	if err != nil {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
+
 	return string(html), nil
 }
 
@@ -116,6 +119,7 @@ func (p *Person) ensureDefaults() {
 	if p.Context == "" {
 		p.Context = "https://schema.org"
 	}
+
 	if p.Type == "" {
 		p.Type = "Person"
 	}

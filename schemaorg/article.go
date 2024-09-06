@@ -98,13 +98,16 @@ func (art *Article) ToJsonLd() templ.Component {
 // ToGoHTMLJsonLd renders the Article struct as a string for Go's `html/template`.
 func (art *Article) ToGoHTMLJsonLd() (string, error) {
 	art.ensureDefaults()
+
 	// Create the templ component.
 	templComponent := art.ToJsonLd()
+
 	// Render the templ component to a `template.HTML` value.
 	html, err := templ.ToGoHTML(context.Background(), templComponent)
 	if err != nil {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
+
 	return string(html), nil
 }
 
@@ -112,6 +115,7 @@ func (art *Article) ensureDefaults() {
 	if art.Context == "" {
 		art.Context = "https://schema.org"
 	}
+
 	if art.Type == "" {
 		art.Type = "Article"
 	}

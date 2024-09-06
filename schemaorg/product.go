@@ -139,13 +139,16 @@ func (p *Product) ToJsonLd() templ.Component {
 // ToGoHTMLJsonLd renders the Product struct as a string for Go's `html/template`.
 func (p *Product) ToGoHTMLJsonLd() (string, error) {
 	p.ensureDefaults()
+
 	// Create the templ component.
 	templComponent := p.ToJsonLd()
+
 	// Render the templ component to a `template.HTML` value.
 	html, err := templ.ToGoHTML(context.Background(), templComponent)
 	if err != nil {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
+
 	return string(html), nil
 }
 
@@ -154,6 +157,7 @@ func (p *Product) ensureDefaults() {
 	if p.Context == "" {
 		p.Context = "https://schema.org"
 	}
+
 	if p.Type == "" {
 		p.Type = "Product"
 	}

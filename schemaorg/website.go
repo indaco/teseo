@@ -99,13 +99,16 @@ func (ws *WebSite) ToJsonLd() templ.Component {
 // ToGoHTMLJsonLd renders the WebSite struct as a string for Go's `html/template`.
 func (ws *WebSite) ToGoHTMLJsonLd() (string, error) {
 	ws.ensureDefaults()
+
 	// Create the templ component.
 	templComponent := ws.ToJsonLd()
+
 	// Render the templ component to a `template.HTML` value.
 	html, err := templ.ToGoHTML(context.Background(), templComponent)
 	if err != nil {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
+
 	return string(html), nil
 }
 
@@ -113,6 +116,7 @@ func (ws *WebSite) ensureDefaults() {
 	if ws.Context == "" {
 		ws.Context = "https://schema.org"
 	}
+
 	if ws.Context == "" {
 		ws.Type = "WebSite"
 	}

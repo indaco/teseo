@@ -111,13 +111,16 @@ func (fp *FAQPage) ToJsonLd() templ.Component {
 // ToGoHTMLJsonLd renders the FAQPage struct as a string for Go's `html/template`.
 func (fp *FAQPage) ToGoHTMLJsonLd() (string, error) {
 	fp.ensureDefaults()
+
 	// Create the templ component.
 	templComponent := fp.ToJsonLd()
+
 	// Render the templ component to a `template.HTML` value.
 	html, err := templ.ToGoHTML(context.Background(), templComponent)
 	if err != nil {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
+
 	return string(html), nil
 }
 
@@ -126,9 +129,11 @@ func (fp *FAQPage) ensureDefaults() {
 	if fp.Context == "" {
 		fp.Context = "https://schema.org"
 	}
+
 	if fp.Type == "" {
 		fp.Type = "FAQPage"
 	}
+
 	for _, q := range fp.MainEntity {
 		q.ensureDefaults()
 	}
@@ -138,6 +143,7 @@ func (q *Question) ensureDefaults() {
 	if q.Type == "" {
 		q.Type = "Question"
 	}
+
 	if q.AcceptedAnswer != nil {
 		q.AcceptedAnswer.ensureDefaults()
 	}

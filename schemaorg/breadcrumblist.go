@@ -107,13 +107,16 @@ func (bcl *BreadcrumbList) ToJsonLd() templ.Component {
 // ToGoHTMLJsonLd renders the BreadcrumbList struct as a string for Go's `html/template`.
 func (bcl *BreadcrumbList) ToGoHTMLJsonLd() (string, error) {
 	bcl.ensureDefaults()
+
 	// Create the templ component.
 	templComponent := bcl.ToJsonLd()
+
 	// Render the templ component to a `template.HTML` value.
 	html, err := templ.ToGoHTML(context.Background(), templComponent)
 	if err != nil {
 		log.Fatalf("failed to convert to html: %v", err)
 	}
+
 	return string(html), nil
 }
 
@@ -121,6 +124,7 @@ func (bcl *BreadcrumbList) ensureDefaults() {
 	if bcl.Context == "" {
 		bcl.Context = "https://schema.org"
 	}
+
 	if bcl.Type == "" {
 		bcl.Type = "BreadcrumbList"
 	}
