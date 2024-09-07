@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"io"
 	"log"
 
 	"github.com/a-h/templ"
@@ -93,10 +92,8 @@ func NewWebSite(url string, name string, alternateName string, description strin
 // ToJsonLd converts the WebSite struct to a JSON-LD `templ.Component`.
 func (ws *WebSite) ToJsonLd() templ.Component {
 	ws.ensureDefaults()
-	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		id := fmt.Sprintf("%s-%s", "website", teseo.GenerateUniqueKey())
-		return templ.JSONScript(id, ws).WithType("application/ld+json").Render(ctx, w)
-	})
+	id := fmt.Sprintf("%s-%s", "website", teseo.GenerateUniqueKey())
+	return templ.JSONScript(id, ws).WithType("application/ld+json")
 }
 
 // ToGoHTMLJsonLd renders the WebSite struct as `template.HTML` value for Go's `html/template`.

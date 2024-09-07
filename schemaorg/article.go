@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"io"
 	"log"
 
 	"github.com/a-h/templ"
@@ -92,10 +91,8 @@ func NewArticle(headline string, images []string, author *Person, publisher *Org
 // ToJsonLd converts the Article struct to a JSON-LD `templ.Component`.
 func (art *Article) ToJsonLd() templ.Component {
 	art.ensureDefaults()
-	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		id := fmt.Sprintf("%s-%s", "article", teseo.GenerateUniqueKey())
-		return templ.JSONScript(id, art).WithType("application/ld+json").Render(ctx, w)
-	})
+	id := fmt.Sprintf("%s-%s", "article", teseo.GenerateUniqueKey())
+	return templ.JSONScript(id, art).WithType("application/ld+json")
 }
 
 // ToGoHTMLJsonLd renders the Article struct as `template.HTML` value for Go's `html/template`.

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"io"
 	"log"
 
 	"github.com/a-h/templ"
@@ -103,10 +102,8 @@ func NewEvent(name, description, startDate, endDate string, location *Place, org
 // ToJsonLd converts the Event struct to a JSON-LD `templ.Component`.
 func (e *Event) ToJsonLd() templ.Component {
 	e.ensureDefaults()
-	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		id := fmt.Sprintf("%s-%s", "event", teseo.GenerateUniqueKey())
-		return templ.JSONScript(id, e).WithType("application/ld+json").Render(ctx, w)
-	})
+	id := fmt.Sprintf("%s-%s", "event", teseo.GenerateUniqueKey())
+	return templ.JSONScript(id, e).WithType("application/ld+json")
 }
 
 // ToGoHTMLJsonLd renders the Event struct as `template.HTML` value for Go's `html/template`.

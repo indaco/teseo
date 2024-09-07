@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"io"
 	"log"
 
 	"github.com/a-h/templ"
@@ -102,10 +101,8 @@ func NewLocalBusiness(name string, description string, url string, telephone str
 // ToJsonLd converts the LocalBusiness struct to a JSON-LD `templ.Component`.
 func (lb *LocalBusiness) ToJsonLd() templ.Component {
 	lb.ensureDefaults()
-	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		id := fmt.Sprintf("%s-%s", "localBusiness", teseo.GenerateUniqueKey())
-		return templ.JSONScript(id, lb).WithType("application/ld+json").Render(ctx, w)
-	})
+	id := fmt.Sprintf("%s-%s", "localBusiness", teseo.GenerateUniqueKey())
+	return templ.JSONScript(id, lb).WithType("application/ld+json")
 }
 
 // ToGoHTMLJsonLd renders the LocalBusiness struct as `template.HTML` value for Go's `html/template`.

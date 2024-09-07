@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"io"
 	"log"
 
 	"github.com/a-h/templ"
@@ -133,10 +132,8 @@ func NewProduct(name, description string, image []string, sku string, brand *Bra
 // ToJsonLd converts the Product struct to a JSON-LD `templ.Component`.
 func (p *Product) ToJsonLd() templ.Component {
 	p.ensureDefaults()
-	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		id := fmt.Sprintf("%s-%s", "product", teseo.GenerateUniqueKey())
-		return templ.JSONScript(id, p).WithType("application/ld+json").Render(ctx, w)
-	})
+	id := fmt.Sprintf("%s-%s", "product", teseo.GenerateUniqueKey())
+	return templ.JSONScript(id, p).WithType("application/ld+json")
 }
 
 // ToGoHTMLJsonLd renders the Product struct as `template.HTML` value for Go's `html/template`.

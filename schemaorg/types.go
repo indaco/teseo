@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"io"
 	"log"
 
 	"github.com/a-h/templ"
@@ -63,10 +62,8 @@ func (org *Organization) ensureDefaults() {
 // ToJsonLd converts the Organization struct to a JSON-LD `templ.Component`.
 func (org *Organization) ToJsonLd() templ.Component {
 	org.ensureDefaults()
-	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		id := fmt.Sprintf("%s-%s", "org", teseo.GenerateUniqueKey())
-		return templ.JSONScript(id, org).WithType("application/ld+json").Render(ctx, w)
-	})
+	id := fmt.Sprintf("%s-%s", "org", teseo.GenerateUniqueKey())
+	return templ.JSONScript(id, org).WithType("application/ld+json")
 }
 
 // ToGoHTMLJsonLd renders the Organization struct as `template.HTML` value for Go's `html/template`.

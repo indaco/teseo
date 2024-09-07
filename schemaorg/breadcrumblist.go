@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"io"
 	"log"
 	"net/url"
 	"strings"
@@ -100,10 +99,8 @@ func NewBreadcrumbListFromUrl(url string) (*BreadcrumbList, error) {
 // ToJsonLd converts the BreadcrumbList struct to a JSON-LD `templ.Component`.
 func (bcl *BreadcrumbList) ToJsonLd() templ.Component {
 	bcl.ensureDefaults()
-	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		id := fmt.Sprintf("%s-%s", "breadcrumbList", teseo.GenerateUniqueKey())
-		return templ.JSONScript(id, bcl).WithType("application/ld+json").Render(ctx, w)
-	})
+	id := fmt.Sprintf("%s-%s", "breadcrumbList", teseo.GenerateUniqueKey())
+	return templ.JSONScript(id, bcl).WithType("application/ld+json")
 }
 
 // ToGoHTMLJsonLd renders the BreadcrumbList struct as `template.HTML` value for Go's `html/template`.

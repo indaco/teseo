@@ -199,10 +199,8 @@ func NewItemList(elements []ItemListElement) ItemList {
 // ToJsonLd converts the SiteNavigationElement struct to a JSON-LD `templ.Component`.
 func (sne *SiteNavigationElement) ToJsonLd() templ.Component {
 	sne.ensureDefaults()
-	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		id := fmt.Sprintf("%s-%s", "siteNavElem", teseo.GenerateUniqueKey())
-		return templ.JSONScript(id, sne).WithType("application/ld+json").Render(ctx, w)
-	})
+	id := fmt.Sprintf("%s-%s", "siteNavElem", teseo.GenerateUniqueKey())
+	return templ.JSONScript(id, sne).WithType("application/ld+json")
 }
 
 // ToGoHTMLJsonLd renders the SiteNavigationElement struct as `template.HTML` value for Go's `html/template`.
