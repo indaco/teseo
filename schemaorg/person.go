@@ -2,6 +2,7 @@ package schemaorg
 
 import (
 	"context"
+	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -95,7 +96,8 @@ func NewPerson(name string, url string, email string, image *ImageObject, jobTit
 func (p *Person) ToJsonLd() templ.Component {
 	p.ensureDefaults()
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		return templ.JSONScript(teseo.GenerateUniqueKey(), p).WithType("application/ld+json").Render(ctx, w)
+		id := fmt.Sprintf("%s-%s", "person", teseo.GenerateUniqueKey())
+		return templ.JSONScript(id, p).WithType("application/ld+json").Render(ctx, w)
 	})
 }
 

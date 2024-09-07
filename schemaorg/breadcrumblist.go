@@ -101,7 +101,8 @@ func NewBreadcrumbListFromUrl(url string) (*BreadcrumbList, error) {
 func (bcl *BreadcrumbList) ToJsonLd() templ.Component {
 	bcl.ensureDefaults()
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		return templ.JSONScript(teseo.GenerateUniqueKey(), bcl).WithType("application/ld+json").Render(ctx, w)
+		id := fmt.Sprintf("%s-%s", "breadcrumbList", teseo.GenerateUniqueKey())
+		return templ.JSONScript(id, bcl).WithType("application/ld+json").Render(ctx, w)
 	})
 }
 

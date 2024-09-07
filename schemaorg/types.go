@@ -2,6 +2,7 @@ package schemaorg
 
 import (
 	"context"
+	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -63,7 +64,8 @@ func (org *Organization) ensureDefaults() {
 func (org *Organization) ToJsonLd() templ.Component {
 	org.ensureDefaults()
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		return templ.JSONScript(teseo.GenerateUniqueKey(), org).WithType("application/ld+json").Render(ctx, w)
+		id := fmt.Sprintf("%s-%s", "org", teseo.GenerateUniqueKey())
+		return templ.JSONScript(id, org).WithType("application/ld+json").Render(ctx, w)
 	})
 }
 

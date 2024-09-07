@@ -200,7 +200,8 @@ func NewItemList(elements []ItemListElement) ItemList {
 func (sne *SiteNavigationElement) ToJsonLd() templ.Component {
 	sne.ensureDefaults()
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		return templ.JSONScript(teseo.GenerateUniqueKey(), sne).WithType("application/ld+json").Render(ctx, w)
+		id := fmt.Sprintf("%s-%s", "siteNavElem", teseo.GenerateUniqueKey())
+		return templ.JSONScript(id, sne).WithType("application/ld+json").Render(ctx, w)
 	})
 }
 

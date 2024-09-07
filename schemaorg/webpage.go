@@ -2,6 +2,7 @@ package schemaorg
 
 import (
 	"context"
+	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -105,7 +106,8 @@ func NewWebPage(url string, name string, headline string, description string, ab
 func (wp *WebPage) ToJsonLd() templ.Component {
 	wp.ensureDefaults()
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		return templ.JSONScript(teseo.GenerateUniqueKey(), wp).WithType("application/ld+json").Render(ctx, w)
+		id := fmt.Sprintf("%s-%s", "webpage", teseo.GenerateUniqueKey())
+		return templ.JSONScript(id, wp).WithType("application/ld+json").Render(ctx, w)
 	})
 }
 

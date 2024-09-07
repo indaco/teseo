@@ -2,6 +2,7 @@ package schemaorg
 
 import (
 	"context"
+	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -103,7 +104,8 @@ func NewEvent(name, description, startDate, endDate string, location *Place, org
 func (e *Event) ToJsonLd() templ.Component {
 	e.ensureDefaults()
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		return templ.JSONScript(teseo.GenerateUniqueKey(), e).WithType("application/ld+json").Render(ctx, w)
+		id := fmt.Sprintf("%s-%s", "event", teseo.GenerateUniqueKey())
+		return templ.JSONScript(id, e).WithType("application/ld+json").Render(ctx, w)
 	})
 }
 

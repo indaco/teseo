@@ -2,6 +2,7 @@ package schemaorg
 
 import (
 	"context"
+	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -102,7 +103,8 @@ func NewLocalBusiness(name string, description string, url string, telephone str
 func (lb *LocalBusiness) ToJsonLd() templ.Component {
 	lb.ensureDefaults()
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
-		return templ.JSONScript(teseo.GenerateUniqueKey(), lb).WithType("application/ld+json").Render(ctx, w)
+		id := fmt.Sprintf("%s-%s", "localBusiness", teseo.GenerateUniqueKey())
+		return templ.JSONScript(id, lb).WithType("application/ld+json").Render(ctx, w)
 	})
 }
 
