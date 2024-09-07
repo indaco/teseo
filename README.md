@@ -271,8 +271,6 @@ The expected output:
 
 **Sitemap XML Generation:**
 
-When developing could be useful to
-
 ```go
 package handlers
 
