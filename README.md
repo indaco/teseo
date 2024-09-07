@@ -146,7 +146,7 @@ The expected output:
 
 #### Example: BreadcrumbList using NewBreadcrumbListFromUrl
 
-`teseo` also provides utility functions such as `NewBreadcrumbListFromUrl`, which helps you automatically generate a breadcrumb list based on the full page URL.
+`teseo` also provides utility functions such as `NewBreadcrumbListFromUrl`, which helps you automatically generate a breadcrumb list based on the full page URL. This method is invaluable during development, as it helps quickly generate and structure breadcrumb navigation for dynamic or complex URLs, making debugging faster and more efficient.
 
 ```templ
 package main
@@ -271,6 +271,8 @@ The expected output:
 
 **Sitemap XML Generation:**
 
+When developing could be useful to
+
 ```go
 package handlers
 
@@ -304,61 +306,7 @@ func HandleHome(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-Then render it in your templ component:
-
-```templ
-package pages
-
-import "github.com/indaco/teseo/schemaorg"
-
-templ HomePage(sne *schemaorg.SiteNavigationElement) {
- <!DOCTYPE html>
- <html lang="en">
-   <head>
-      <meta charset="UTF-8"/>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-      <title>teseo - homepage</title>
-      <!-- render JSON-LD here -->
-      @sne.ToJsonLd()
-    </head>
-    <body>
-       <!-- your content -->
-    </body>
- </html>
-}
-```
-
-**Parsing Sitemap XML:**
-
-You can also parse an existing sitemap XML file and populate the `SiteNavigationElement` struct:
-
-```go
-package handlers
-
-import (
-  "log"
-  "net/http"
-
-  "github.com/indaco/teseo"
-  "github.com/indaco/teseo/_demos/pages"
-  "github.com/indaco/teseo/schemaorg"
-)
-
-func HandleAbout(w http.ResponseWriter, r *http.Request) {
-  sne := &schemaorg.SiteNavigationElement{}
-  err = sne.FromSitemapFile("./_demos/statics/sitemap.xml")
-  if err != nil {
-    log.Fatalf("Failed to read sitemap: %v", err)
-  }
-
-  err = pages.AboutPage(sne).Render(r.Context(), w)
-  if err != nil {
-    return
-  }
-}
-```
-
-Then render it in your templ component as the example above.
+Similarly, the `FromSitemapFile` method allows you to parse a sitemap XML file and populate the `SiteNavigationElement` struct. This can speed up the debugging process and is particularly useful when working with dynamically generated sitemaps.
 
 ### OpenGraph Meta Tags
 
