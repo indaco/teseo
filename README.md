@@ -30,7 +30,7 @@ Whether you are looking to implement _Schema.org JSON-LD_, _OpenGraph_, or _Twit
 - A comprehensive list of useful **Schema.org JSON-LD** types.
 - A comprehensive list of useful **OpenGraph** meta tags.
 - Support for **Twitter Cards** meta tags.
-- Easy-to-use functions to generate JSON-LD and meta tags.
+- Easy-to-use methods to generate JSON-LD and meta tags.
 - Render data types as **templ components** or using **template/html**.
 
 ## Supported Data Types
@@ -89,7 +89,7 @@ go get github.com/indaco/teseo@latest
 
 ### Schema.org JSON-LD
 
-For **Schema.org JSON-LD**, each entity provides `ToTemplJsonLd` and `ToGoHTMLJsonLd` functions. You can render the structured data as a templ component or as an HTML string, suitable for Go's `template/html`. Entities can be created using **pure structs** or **factory methods**.
+For **Schema.org JSON-LD**, each entity provides `ToJsonLd` and `ToGoHTMLJsonLd` methods. You can render the structured data as a templ component or as an HTML string, suitable for Go's `template/html`. Entities can be created using **pure structs** or **factory methods**.
 
 #### Example: WebPage
 
@@ -146,7 +146,7 @@ The expected output:
 
 #### Example: BreadcrumbList using NewBreadcrumbListFromUrl
 
-`teseo` also provides utility functions such as `NewBreadcrumbListFromUrl`, which helps you automatically generate a breadcrumb list based on the full page URL. This method is invaluable during development, as it helps quickly generate and structure breadcrumb navigation for dynamic or complex URLs, making debugging faster and more efficient.
+`teseo` also provides utility methods such as `NewBreadcrumbListFromUrl`, which helps you automatically generate a breadcrumb list based on the full page URL. This method is invaluable during development, as it helps quickly generate and structure breadcrumb navigation for dynamic or complex URLs, making debugging faster and more efficient.
 
 ```templ
 package main
@@ -308,7 +308,7 @@ Similarly, the `FromSitemapFile` method allows you to parse a sitemap XML file a
 
 ### OpenGraph Meta Tags
 
-For **OpenGraph**, entities come with `ToMetaTags` and `ToGoHTMLMetaTags` functions that generates the necessary meta tags for OpenGraph data. Similar to Schema.org, you can either create the entity via a **pure struct** or a **factory method**. Here’s an example for generating meta tags for an _Article_:
+For **OpenGraph**, entities come with `ToMetaTags` and `ToGoHTMLMetaTags` methods that generates the necessary meta tags for OpenGraph data. Similar to Schema.org, you can either create the entity via a **pure struct** or a **factory method**. Here’s an example for generating meta tags for an _Article_:
 
 ```templ
 package pages
@@ -352,7 +352,7 @@ The expected output:
 
 ### Twitter Cards
 
-For **Twitter Cards**, you can also use either the **pure struct** or **factory methods** to generate Twitter Card meta tags via the `ToMetaTags` and `ToGoHTMLMetaTags` functions. Here’s how to generate a _Twitter Summary Card_.
+For **Twitter Cards**, you can also use either the **pure struct** or **factory methods** to generate Twitter Card meta tags via the `ToMetaTags` and `ToGoHTMLMetaTags` methods. Here’s how to generate a _Twitter Summary Card_.
 
 ```templ
 package pages
