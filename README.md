@@ -5,8 +5,8 @@
         <img src="https://img.shields.io/badge/license-mit-blue?style=flat-square&logo=none" alt="license" />
     </a>
      &nbsp;
-     <a href="https://goreportcard.com/report/github.com/indaco/teseo/" target="_blank">
-        <img src="https://goreportcard.com/badge/github.com/indaco/teseo" alt="go report card" />
+     <a href="https://goreportcard.com/report/github.com/indaco/teseo" target="_blank">
+        <img src="https://goreportcard.com/badge/indaco/teseo" alt="go report card" />
     </a>
     &nbsp;
     <a href="https://pkg.go.dev/github.com/indaco/teseo/" target="_blank">
