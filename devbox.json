@@ -10,8 +10,8 @@
   "shell": {
     "init_hook": [
       "gum style --border normal --margin '1' --padding '1 2' --border-foreground 212 'Welcome to the teseo devbox!'",
-      "gum log -sl info 'Installing go modules...' module 'romshark/templier'",
-      "go install github.com/romshark/templier@latest"
+      "gum log -sl info 'Installing go modules...' module 'romshark/templier@v0.6.1'",
+      "go install github.com/romshark/templier@v0.6.1"
     ],
     "scripts": {
       "templ": ["task templ"],
