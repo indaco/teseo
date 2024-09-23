@@ -17,7 +17,7 @@ print-js-debug-logs: true
 #  erronly: error logs only
 #  verbose: verbose logging of relevant events and timings
 #  debug: verbose debug logging
-log: verbose
+log: erronly
 
 debounce:
   # debounce.templ defines how long to wait for more _templ.txt file changes
