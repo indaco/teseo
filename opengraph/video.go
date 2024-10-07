@@ -11,7 +11,7 @@ import (
 )
 
 // Video represents the Open Graph video metadata.
-//
+// For more details about the meaning of the properties see: https://ogp.me/#type_video
 // Example usage:
 //
 // Pure struct usage:

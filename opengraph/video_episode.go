@@ -12,6 +12,7 @@ import (
 )
 
 // VideoEpisode represents the Open Graph video episode metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#type_video.episode
 //
 // Example usage:
 //

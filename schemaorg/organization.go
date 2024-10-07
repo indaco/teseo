@@ -1,6 +1,7 @@
 package schemaorg
 
 // Organization represents a Schema.org Organization object.
+// For more details about the meaning of the properties, see:https://schema.org/Organization
 //
 // Example usage:
 //

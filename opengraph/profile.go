@@ -11,6 +11,7 @@ import (
 )
 
 // Profile represents the Open Graph profile metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#type_profile
 //
 // Example usage:
 //

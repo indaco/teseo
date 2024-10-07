@@ -11,6 +11,7 @@ import (
 )
 
 // MusicPlaylist represents the Open Graph music playlist metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#type_music.playlist
 //
 // Example usage:
 //

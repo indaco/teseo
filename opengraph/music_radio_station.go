@@ -11,6 +11,7 @@ import (
 )
 
 // MusicRadioStation represents the Open Graph music radio station metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#type_music.radio_station
 //
 // Example usage:
 //

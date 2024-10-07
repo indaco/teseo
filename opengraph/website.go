@@ -11,6 +11,7 @@ import (
 )
 
 // WebSite represents the Open Graph website metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#type_website
 //
 // Example usage:
 //

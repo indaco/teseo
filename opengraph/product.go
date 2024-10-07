@@ -11,6 +11,7 @@ import (
 )
 
 // Product represents the Open Graph product metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#metadata
 //
 // Example usage:
 //

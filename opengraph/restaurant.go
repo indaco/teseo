@@ -11,6 +11,7 @@ import (
 )
 
 // Restaurant represents the Open Graph restaurant metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#metadata
 //
 // Example usage:
 //

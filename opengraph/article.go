@@ -11,6 +11,7 @@ import (
 )
 
 // Article represents the Open Graph article metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#type_article
 //
 // Example usage:
 //

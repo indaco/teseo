@@ -13,6 +13,7 @@ import (
 // Common type definitions used across multiple JSON-LD entities
 
 // ContactPoint represents a Schema.org ContactPoint object
+// For more details about the meaning of the properties see: https://schema.org/ContactPoint
 type ContactPoint struct {
 	Type              string `json:"@type"`
 	Telephone         string `json:"telephone,omitempty"`
@@ -22,6 +23,7 @@ type ContactPoint struct {
 }
 
 // ImageObject represents a Schema.org ImageObject object
+// For more details about the meaning of the properties see: https://schema.org/ImageObject
 type ImageObject struct {
 	Type string `json:"@type"`
 	URL  string `json:"url,omitempty"`
@@ -35,6 +37,7 @@ func (img *ImageObject) ensureDefaults() {
 }
 
 // Organization represents a Schema.org Organization object
+// For more details about the meaning of the properties see: https://schema.org/Organization
 type Organization struct {
 	Context       string         `json:"@context"`
 	Type          string         `json:"@type"`
@@ -81,6 +84,7 @@ func (org *Organization) ToGoHTMLJsonLd() (template.HTML, error) {
 }
 
 // Person represents a Schema.org Person object
+// For more details about the meaning of the properties see: https://schema.org/Person
 type Person struct {
 	Context     string         `json:"@context"`
 	Type        string         `json:"@type"`
@@ -100,6 +104,7 @@ type Person struct {
 }
 
 // ListItem represents a Schema.org ListItem object
+// For more details about the meaning of the properties see: https://schema.org/ListItem
 type ListItem struct {
 	Type     string `json:"@type"`
 	Position int    `json:"position,omitempty"`

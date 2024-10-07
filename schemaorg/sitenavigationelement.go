@@ -14,6 +14,7 @@ import (
 )
 
 // SiteNavigationElement represents a Schema.org SiteNavigationElement object.
+// For more details about the meaning of the properties see: https://schema.org/SiteNavigationElement
 //
 // Example usage:
 //

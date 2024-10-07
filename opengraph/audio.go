@@ -11,6 +11,7 @@ import (
 )
 
 // Audio represents the Open Graph audio metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#metadata
 //
 // Example usage:
 //

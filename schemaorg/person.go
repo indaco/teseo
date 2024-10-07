@@ -11,6 +11,7 @@ import (
 )
 
 // Person represents a Schema.org Person object.
+// For more details about the meaning of the properties see: https://schema.org/Person
 //
 // Example usage:
 //

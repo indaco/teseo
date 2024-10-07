@@ -11,6 +11,7 @@ import (
 )
 
 // Event represents a Schema.org Event object.
+// For more details about the meaning of the properties see:https://schema.org/Event
 //
 // Example usage:
 //

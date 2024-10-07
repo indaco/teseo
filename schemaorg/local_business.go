@@ -11,6 +11,7 @@ import (
 )
 
 // LocalBusiness represents a Schema.org LocalBusiness object.
+// For more details about the meaning of the properties see:https://schema.org/LocalBusiness
 //
 // Example usage:
 //

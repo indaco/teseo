@@ -11,6 +11,7 @@ import (
 )
 
 // MusicAlbum represents the Open Graph music album metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#type_music.album
 //
 // Example usage:
 //

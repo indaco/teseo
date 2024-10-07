@@ -11,6 +11,7 @@ import (
 )
 
 // ProductGroup represents the Open Graph product group metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#metadata
 //
 // Example usage:
 //

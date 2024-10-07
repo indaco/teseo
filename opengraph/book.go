@@ -11,6 +11,7 @@ import (
 )
 
 // Book represents the Open Graph book metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#type_book
 //
 // Example usage:
 //

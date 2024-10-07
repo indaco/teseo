@@ -11,6 +11,7 @@ import (
 )
 
 // Event represents the Open Graph event metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#metadata
 //
 // Example usage:
 //

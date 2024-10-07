@@ -11,6 +11,7 @@ import (
 )
 
 // MusicSong represents the Open Graph music song metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#type_music.song
 //
 // Example usage:
 //

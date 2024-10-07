@@ -11,6 +11,7 @@ import (
 )
 
 // VideoMovie represents the Open Graph video movie metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#type_video.movie
 //
 // Example usage:
 //

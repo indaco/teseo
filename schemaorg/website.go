@@ -11,6 +11,7 @@ import (
 )
 
 // WebSite represents a Schema.org WebSite object.
+// For more details about the meaning of the properties see: https://schema.org/WebSite
 //
 // Example usage:
 //

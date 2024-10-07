@@ -14,6 +14,7 @@ import (
 )
 
 // BreadcrumbList represents a Schema.org BreadcrumbList object.
+// For more details about the meaning of the properties see:https://schema.org/BreadcrumbList
 //
 // Example usage:
 //

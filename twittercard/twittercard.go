@@ -25,6 +25,7 @@ const (
 )
 
 // TwitterCard contains information for generating Twitter Card meta tags.
+// For more details about the meaning of the properties see: https://developer.x.com/en/docs/x-for-websites/cards/overview/markup
 //
 // Example usage:
 //

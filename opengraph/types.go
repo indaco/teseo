@@ -1,6 +1,7 @@
 package opengraph
 
 // OpenGraphObject represents common Open Graph metadata.
+// For more details about the meaning of the properties see: https://ogp.me/#metadata
 type OpenGraphObject struct {
 	Type        string // og:type, the type of the object
 	Title       string // og:title, the title of the object
