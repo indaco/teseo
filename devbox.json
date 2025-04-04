@@ -1,21 +1,28 @@
 {
-  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.12.0/.schema/devbox.schema.json",
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.0/.schema/devbox.schema.json",
   "packages": [
     "git@latest",
-    "go@1.22",
+    "go@1.23",
+    "golangci-lint@latest",
     "go-task@latest",
-    "gum@latest",
+    "gnumake@latest",
     "templ@latest"
   ],
+  "env": {
+    "GOPATH": "$HOME/go/",
+    "PATH": "$PATH:$HOME/go/bin"
+  },
   "shell": {
     "init_hook": [
-      "gum style --border normal --margin '1' --padding '1 2' --border-foreground 212 'Welcome to the teseo devbox!'",
-      "gum log -sl info 'Installing go modules...' module 'romshark/templier@v0.6.1'",
-      "go install github.com/romshark/templier@v0.6.1"
+      "echo '\nWelcome to the Teseo devbox!\n'",
+      "echo '* Set GOROOT'",
+      "export GOROOT=$(go env GOROOT)",
+      "echo '* Set Git hooks path\n'",
+      "find .githooks -type f -exec chmod +x {} \\;",
+      "git config core.hooksPath .githooks",
+      "echo '* Install go-modernize'",
+      "go install golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest"
     ],
-    "scripts": {
-      "templ": ["task templ"],
-      "live": ["task live"]
-    }
+    "scripts": {}
   }
 }
