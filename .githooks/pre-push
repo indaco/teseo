@@ -16,4 +16,4 @@ golangci-lint run ./...
 echo ""
 echo '* Run: all tests and generate coverage report'
 go clean -testcache
-go test -count=1 -timeout 30s $(go list ./... | grep -Ev 'internal/testhelpers|internal/testutils|internal/templates') -covermode=atomic
+go test -count=1 -timeout 30s ./... -covermode=atomic
