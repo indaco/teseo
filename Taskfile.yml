@@ -18,38 +18,85 @@ tasks:
     internal: true
     silent: true
     dir: '{{ .demo_pages_base_dir }}'
-    env:
-      TEMPL_EXPERIMENT: rawgo
     cmds:
       - echo "run templ generate"
       - templ generate
 
-  templ/live:
-    internal: true
-    silent: true
-    dir: '{{ .demo_pages_base_dir }}'
-    env:
-      TEMPL_EXPERIMENT: rawgo
-    cmds:
-      - templ generate --watch --proxy="http://localhost:8080" --open-browser=false -v
-
-  server/live:
-    internal: true
-    silent: true
-    cmds:
-      - templier --config ./.templier.yml
-
   # public tasks
+  clean:
+    desc: Clean the build directory and Go cache
+    cmds:
+      - go clean -cache
+
+  test:
+    desc: Run all tests and generate coverage report
+    silent: false
+    cmds:
+      - go test -count=1 -timeout 30s ./... -covermode=atomic -coverprofile=coverage.txt
+      - task: test/view-total-coverage
+
+  test/view-total-coverage:
+    desc: Display total test coverage from coverage.txt
+    silent: true
+    internal: true
+    cmds:
+      - echo ""
+      - echo "Total Coverage:"
+      - go tool cover -func=coverage.txt | grep total | awk -F '[[:space:]]+' '{print $NF}'
+
+  test/view-coverage:
+    desc: View the HTML coverage report.
+    internal: true
+    cmds:
+      - go tool cover -html=coverage.txt
+      - echo "Coverage report displayed in your default browser."
+
+  test/coverage:
+    desc: Run go tests and use go tool cover
+    silent: false
+    deps:
+      - test/force
+    cmds:
+      - task: test/view-coverage
+
+  test/force:
+    desc: Clean go tests cache and run all tests
+    silent: false
+    cmds:
+      - go clean -testcache
+      - task: test
+
+  modernize:
+    desc: Run go-modernize
+    silent: false
+    cmds:
+      - modernize -test ./...
+
+  lint:
+    desc: Run golangci-lint
+    silent: false
+    cmds:
+      - golangci-lint run ./...
+
+  build:
+    desc: Build for production
+    silent: false
+    deps:
+      - modernize
+      - lint
+      - test/force
+
   templ:
-    desc: Run templ fmt and templ generate commands on the demos.
+    desc: Run templ fmt and templ generate commands on the demos
     silent: true
     cmds:
       - task: templ/fmt
       - task: templ/gen
 
-  live:
-    desc: Run the demos live server with templ watch mode.
+  dev:
+    desc: Run the demos server
     silent: true
-    deps: [templ/live, server/live]
+    deps: [templ]
     cmds:
-      - echo "Running live server"
+      - echo "Running the demo app"
+      - go run ./_demos

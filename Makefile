@@ -1,19 +1,13 @@
-color_red     := $(shell printf "\e[31m")
+# Colors
 color_green   := $(shell printf "\e[32m")
-color_yellow  := $(shell printf "\e[33m")
-color_blue    := $(shell printf "\e[34m")
-color_magenta := $(shell printf "\e[35m")
-color_cyan    := $(shell printf "\e[36m")
+color_reset   := $(shell printf "\e[0m")
 
-# Bold variants
-color_bold_red     := $(shell printf "\e[1;31m")
-color_bold_green   := $(shell printf "\e[1;32m")
-color_bold_yellow  := $(shell printf "\e[1;33m")
-color_bold_blue    := $(shell printf "\e[1;34m")
-color_bold_magenta := $(shell printf "\e[1;35m")
-color_bold_cyan    := $(shell printf "\e[1;36m")
-color_reset        := $(shell printf "\e[0m")
+# Go commands
+GO := go
+GOBUILD := $(GO) build
+GOCLEAN := $(GO) clean
 
+# Directories
 DEMOS_BASE_DIR := _demos
 DEMO_PAGES_BASE_DIR := ${DEMOS_BASE_DIR}/pages
 
@@ -34,38 +28,84 @@ help: ## Print this help message
 # ==================================================================================== #
 # PRIVATE TASKS
 # ==================================================================================== #
+.PHONY: _templ/fmt
 _templ/fmt: BASE_DIR := .
 _templ/fmt:
 	@echo "run templ fmt in $(BASE_DIR)"
 	@cd $(BASE_DIR) && templ fmt .
 
+.PHONY: _templ/gen
 _templ/gen: BASE_DIR := .
 _templ/gen:
 	@echo "run templ generate in $(BASE_DIR)"
 	@cd $(BASE_DIR) && TEMPL_EXPERIMENT=rawgo templ generate
 
+.PHONY: _demo/fmt
 _demo/fmt: BASE_DIR := $(DEMO_PAGES_BASE_DIR)
 _demo/fmt:
 	@$(MAKE) _templ/fmt BASE_DIR=$(BASE_DIR)
 
+.PHONY: _demo/gen
 _demo/gen: BASE_DIR := $(DEMO_PAGES_BASE_DIR)
 _demo/gen:
 	@$(MAKE) _templ/gen BASE_DIR=$(BASE_DIR)
 
-_live/templ:
-	@cd $(DEMO_PAGES_BASE_DIR) && TEMPL_EXPERIMENT=rawgo templ generate --watch --proxy="http://localhost:8080" --open-browser=false -v
-
-_live/server:
-	@templier --config ./.templier.yml
+.PHONY: _demo/run
+_demo/run:
+	@go run ./_demos
 
 # ==================================================================================== #
 # PUBLIC TASKS
 # ==================================================================================== #
-templ: ## Run templ fmt and templ generate commands on the demos.
+.PHONY: clean
+clean: ## Clean the build directory and Go cache
+	@echo "$(color_bold_cyan)* Clean the build directory and Go cache$(color_reset)"
+	@rm -rf $(BUILD_DIR)
+	$(GOCLEAN) -cache
+
+.PHONY: test
+test: ## Run all tests and generate coverage report
+	@echo "$(color_bold_cyan)* Run all tests and generate coverage report.$(color_reset)"
+	@$(GO) test -count=1 -timeout 30s ./... -covermode=atomic -coverprofile=coverage.txt
+	@echo "$(color_bold_cyan)* Total Coverage$(color_reset)"
+	@$(GO) tool cover -func=coverage.txt | grep total | awk '{print $$3}'
+
+.PHONY: test/coverage
+test/coverage: ## Run go tests and use go tool cover
+	@echo "$(color_bold_cyan)* Run go tests and use go tool cover$(color_reset)"
+	@$(MAKE) test/force
+	@$(GO) tool cover -html=coverage.txt
+
+.PHONY: test/force
+test/force: ## Clean go tests cache
+	@echo "$(color_bold_cyan)* Clean go tests cache and run all tests.$(color_reset)"
+	@$(GO) clean -testcache
+	@$(MAKE) test
+
+.PHONY: modernize
+modernize: ## Run go-modernize
+	@echo "$(color_bold_cyan)* Running go-modernize$(color_reset)"
+	@modernize -test ./...
+
+.PHONY: lint
+lint: ## Run golangci-lint
+	@echo "$(color_bold_cyan)* Running golangci-lint$(color_reset)"
+	@golangci-lint run ./...
+
+.PHONY: build
+install: ## Build for production
+	@$(MAKE) modernize
+	@$(MAKE) lint
+	@$(MAKE) test/force
+	@echo "$(color_bold_cyan)* Install the binary using Go install$(color_reset)"
+	@cd $(CMD_DIR) && $(GO) install .
+
+.PHONY: templ
+templ: ## Run templ fmt and templ generate commands on the demos
 	@echo "$(color_bold_cyan) * Running templ commands on the demos...$(color_reset)"
 	@$(MAKE) -j2 _demo/fmt _demo/gen
 
-live: ## Run the demos live server with templ watch mode.
-	@echo "$(color_bold_cyan) * Running live server...$(color_reset)"
-	@$(MAKE) -j2 _live/templ _live/server
-
+.PHONY: dev
+dev: ## Run the demos server
+	@echo "Running the demo app"
+	@$(MAKE) templ _demo/run
