@@ -129,15 +129,11 @@ func (bus *Business) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Business as `template.HTML` value for Go's `html/template`.
 func (bus *Business) ToGoHTMLMetaTags() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := bus.ToMetaTags()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	html, err := templ.ToGoHTML(context.Background(), bus.ToMetaTags())
 	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
 	}
-
 	return html, nil
 }
 
@@ -147,14 +143,8 @@ func (bus *Business) ensureDefaults() {
 }
 
 // metaTags returns all meta tags for the Business object, including OpenGraphObject fields and business-specific ones.
-func (bus *Business) metaTags() []struct {
-	property string
-	content  string
-} {
-	return []struct {
-		property string
-		content  string
-	}{
+func (bus *Business) metaTags() []metaTag {
+	return []metaTag{
 		{"og:type", "business.business"},
 		{"og:title", bus.Title},
 		{"og:url", bus.URL},

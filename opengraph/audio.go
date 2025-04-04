@@ -99,15 +99,11 @@ func (audio *Audio) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Audio as `template.HTML` value for Go's `html/template`.
 func (audio *Audio) ToGoHTMLMetaTags() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := audio.ToMetaTags()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	html, err := templ.ToGoHTML(context.Background(), audio.ToMetaTags())
 	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
 	}
-
 	return html, nil
 }
 
@@ -117,14 +113,8 @@ func (audio *Audio) ensureDefaults() {
 }
 
 // metaTags returns all meta tags for the Audio object, including OpenGraphObject fields and audio-specific ones.
-func (audio *Audio) metaTags() []struct {
-	property string
-	content  string
-} {
-	return []struct {
-		property string
-		content  string
-	}{
+func (audio *Audio) metaTags() []metaTag {
+	tags := []metaTag{
 		{"og:type", "music.audio"},
 		{"og:title", audio.Title},
 		{"og:url", audio.URL},
@@ -133,4 +123,13 @@ func (audio *Audio) metaTags() []struct {
 		{"music:duration", audio.Duration},
 		{"music:musician", audio.ArtistURL},
 	}
+
+	if audio.Duration != "" {
+		tags = append(tags, metaTag{"music:duration", audio.Duration})
+	}
+	if audio.ArtistURL != "" {
+		tags = append(tags, metaTag{"music:musician", audio.ArtistURL})
+	}
+
+	return tags
 }

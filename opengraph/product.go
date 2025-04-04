@@ -99,15 +99,11 @@ func (p *Product) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Product as `template.HTML` value for Go's `html/template`.
 func (p *Product) ToGoHTMLMetaTags() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := p.ToMetaTags()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	html, err := templ.ToGoHTML(context.Background(), p.ToMetaTags())
 	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
 	}
-
 	return html, nil
 }
 
@@ -117,20 +113,21 @@ func (p *Product) ensureDefaults() {
 }
 
 // metaTags returns all meta tags for the Product object, including OpenGraphObject fields and product-specific ones.
-func (p *Product) metaTags() []struct {
-	property string
-	content  string
-} {
-	return []struct {
-		property string
-		content  string
-	}{
+func (p *Product) metaTags() []metaTag {
+	tags := []metaTag{
 		{"og:type", "product"},
 		{"og:title", p.Title},
 		{"og:url", p.URL},
 		{"og:description", p.Description},
 		{"og:image", p.Image},
-		{"product:price:amount", p.Price},
-		{"product:price:currency", p.PriceCurrency},
 	}
+
+	if p.Price != "" {
+		tags = append(tags, metaTag{"product:price:amount", p.Price})
+	}
+	if p.PriceCurrency != "" {
+		tags = append(tags, metaTag{"product:price:currency", p.PriceCurrency})
+	}
+
+	return tags
 }

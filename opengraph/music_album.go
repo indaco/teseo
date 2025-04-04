@@ -105,15 +105,11 @@ func (ma *MusicAlbum) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Music Album as `template.HTML` value for Go's `html/template`.
 func (ma *MusicAlbum) ToGoHTMLMetaTags() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := ma.ToMetaTags()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	html, err := templ.ToGoHTML(context.Background(), ma.ToMetaTags())
 	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
 	}
-
 	return html, nil
 }
 
@@ -123,14 +119,8 @@ func (ma *MusicAlbum) ensureDefaults() {
 }
 
 // metaTags returns all meta tags for the MusicAlbum object, including OpenGraphObject fields and music-specific ones.
-func (ma *MusicAlbum) metaTags() []struct {
-	property string
-	content  string
-} {
-	tags := []struct {
-		property string
-		content  string
-	}{
+func (ma *MusicAlbum) metaTags() []metaTag {
+	tags := []metaTag{
 		{"og:type", "music.album"},
 		{"og:title", ma.Title},
 		{"og:url", ma.URL},
@@ -143,10 +133,7 @@ func (ma *MusicAlbum) metaTags() []struct {
 	// Add music:musician tags
 	for _, musician := range ma.Musician {
 		if musician != "" {
-			tags = append(tags, struct {
-				property string
-				content  string
-			}{"music:musician", musician})
+			tags = append(tags, metaTag{"music:musician", musician})
 		}
 	}
 

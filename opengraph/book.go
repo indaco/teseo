@@ -111,15 +111,11 @@ func (book *Book) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Book as `template.HTML` value for Go's `html/template`.
 func (book *Book) ToGoHTMLMetaTags() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := book.ToMetaTags()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	html, err := templ.ToGoHTML(context.Background(), book.ToMetaTags())
 	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
 	}
-
 	return html, nil
 }
 
@@ -129,14 +125,8 @@ func (book *Book) ensureDefaults() {
 }
 
 // metaTags returns all meta tags for the Book object, including OpenGraphObject fields and book-specific ones.
-func (book *Book) metaTags() []struct {
-	property string
-	content  string
-} {
-	tags := []struct {
-		property string
-		content  string
-	}{
+func (book *Book) metaTags() []metaTag {
+	tags := []metaTag{
 		{"og:type", "book"},
 		{"og:title", book.Title},
 		{"og:url", book.URL},
@@ -149,20 +139,14 @@ func (book *Book) metaTags() []struct {
 	// Add book:author tags
 	for _, author := range book.Author {
 		if author != "" {
-			tags = append(tags, struct {
-				property string
-				content  string
-			}{"book:author", author})
+			tags = append(tags, metaTag{"book:author", author})
 		}
 	}
 
 	// Add book:tag tags
 	for _, tag := range book.Tag {
 		if tag != "" {
-			tags = append(tags, struct {
-				property string
-				content  string
-			}{"book:tag", tag})
+			tags = append(tags, metaTag{"book:tag", tag})
 		}
 	}
 

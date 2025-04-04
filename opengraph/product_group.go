@@ -102,15 +102,11 @@ func (pg *ProductGroup) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Product Group as `template.HTML` value for Go's `html/template`.
 func (pg *ProductGroup) ToGoHTMLMetaTags() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := pg.ToMetaTags()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	html, err := templ.ToGoHTML(context.Background(), pg.ToMetaTags())
 	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
 	}
-
 	return html, nil
 }
 
@@ -120,14 +116,8 @@ func (pg *ProductGroup) ensureDefaults() {
 }
 
 // metaTags returns all meta tags for the ProductGroup object, including OpenGraphObject fields and product-specific ones.
-func (pg *ProductGroup) metaTags() []struct {
-	property string
-	content  string
-} {
-	tags := []struct {
-		property string
-		content  string
-	}{
+func (pg *ProductGroup) metaTags() []metaTag {
+	tags := []metaTag{
 		{"og:type", "product.group"},
 		{"og:title", pg.Title},
 		{"og:url", pg.URL},
@@ -138,10 +128,7 @@ func (pg *ProductGroup) metaTags() []struct {
 	// Add product:group_item tags for each product in the group
 	for _, product := range pg.Products {
 		if product != "" {
-			tags = append(tags, struct {
-				property string
-				content  string
-			}{"product:group_item", product})
+			tags = append(tags, metaTag{"product:group_item", product})
 		}
 	}
 

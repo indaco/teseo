@@ -89,15 +89,11 @@ func (mrs *MusicRadioStation) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Music Radio Station as `template.HTML` value for Go's `html/template`.
 func (mrs *MusicRadioStation) ToGoHTMLMetaTags() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := mrs.ToMetaTags()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	html, err := templ.ToGoHTML(context.Background(), mrs.ToMetaTags())
 	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
 	}
-
 	return html, nil
 }
 
@@ -107,14 +103,8 @@ func (mrs *MusicRadioStation) ensureDefaults() {
 }
 
 // metaTags returns all meta tags for the MusicRadioStation object, including OpenGraphObject fields.
-func (mrs *MusicRadioStation) metaTags() []struct {
-	property string
-	content  string
-} {
-	return []struct {
-		property string
-		content  string
-	}{
+func (mrs *MusicRadioStation) metaTags() []metaTag {
+	return []metaTag{
 		{"og:type", "music.radio_station"},
 		{"og:title", mrs.Title},
 		{"og:url", mrs.URL},

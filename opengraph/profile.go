@@ -103,22 +103,17 @@ func (p *Profile) ToMetaTags() templ.Component {
 				}
 			}
 		}
-
 		return nil
 	})
 }
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Profile as `template.HTML` value for Go's `html/template`.
 func (p *Profile) ToGoHTMLMetaTags() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := p.ToMetaTags()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	html, err := templ.ToGoHTML(context.Background(), p.ToMetaTags())
 	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
 	}
-
 	return html, nil
 }
 
@@ -128,22 +123,21 @@ func (p *Profile) ensureDefaults() {
 }
 
 // metaTags returns all meta tags for the Profile object, including OpenGraphObject fields and profile-specific ones.
-func (p *Profile) metaTags() []struct {
-	property string
-	content  string
-} {
-	return []struct {
-		property string
-		content  string
-	}{
+func (p *Profile) metaTags() []metaTag {
+	tags := []metaTag{
 		{"og:type", "profile"},
 		{"og:title", p.Title},
 		{"og:url", p.URL},
+		{"og:description", p.Description},
+		{"og:image", p.Image},
 		{"profile:first_name", p.FirstName},
 		{"profile:last_name", p.LastName},
 		{"profile:username", p.Username},
-		{"profile:gender", p.Gender},
-		{"og:description", p.Description},
-		{"og:image", p.Image},
 	}
+
+	if p.Gender != "" {
+		tags = append(tags, metaTag{"profile:gender", p.Gender})
+	}
+
+	return tags
 }

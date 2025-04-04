@@ -16,3 +16,10 @@ func (og *OpenGraphObject) ensureDefaults(defaultType string) {
 		og.Type = defaultType
 	}
 }
+
+// metaTag represents a single Open Graph meta tag with a property and content.
+// Used internally to collect metadata before rendering as HTML <meta> elements.
+type metaTag struct {
+	property string
+	content  string
+}

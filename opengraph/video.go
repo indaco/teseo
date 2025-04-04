@@ -106,31 +106,17 @@ func (video *Video) ToMetaTags() templ.Component {
 				}
 			}
 		}
-
-		// Write video:actor meta tags for each actor URL
-		for _, actorURL := range video.ActorURLs {
-			if actorURL != "" {
-				if err := teseo.WriteMetaTag(w, "video:actor", actorURL); err != nil {
-					return err
-				}
-			}
-		}
-
 		return nil
 	})
 }
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Video as `template.HTML` value for Go's `html/template`.
 func (video *Video) ToGoHTMLMetaTags() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := video.ToMetaTags()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	html, err := templ.ToGoHTML(context.Background(), video.ToMetaTags())
 	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
 	}
-
 	return html, nil
 }
 
@@ -140,14 +126,8 @@ func (video *Video) ensureDefaults() {
 }
 
 // metaTags returns all meta tags for the Video object, including OpenGraphObject fields and video-specific ones.
-func (video *Video) metaTags() []struct {
-	property string
-	content  string
-} {
-	return []struct {
-		property string
-		content  string
-	}{
+func (video *Video) metaTags() []metaTag {
+	tags := []metaTag{
 		{"og:type", "video.movie"},
 		{"og:title", video.Title},
 		{"og:url", video.URL},
@@ -157,4 +137,12 @@ func (video *Video) metaTags() []struct {
 		{"video:director", video.DirectorURL},
 		{"video:release_date", video.ReleaseDate},
 	}
+
+	for _, actorURL := range video.ActorURLs {
+		if actorURL != "" {
+			tags = append(tags, metaTag{"video:actor", actorURL})
+		}
+	}
+
+	return tags
 }

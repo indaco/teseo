@@ -129,15 +129,11 @@ func (restaurant *Restaurant) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Restaurant as `template.HTML` value for Go's `html/template`.
 func (restaurant *Restaurant) ToGoHTMLMetaTags() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := restaurant.ToMetaTags()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	html, err := templ.ToGoHTML(context.Background(), restaurant.ToMetaTags())
 	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
 	}
-
 	return html, nil
 }
 
@@ -147,26 +143,39 @@ func (restaurant *Restaurant) ensureDefaults() {
 }
 
 // metaTags returns all meta tags for the Restaurant object, including OpenGraphObject fields and restaurant-specific ones.
-func (restaurant *Restaurant) metaTags() []struct {
-	property string
-	content  string
-} {
-	return []struct {
-		property string
-		content  string
-	}{
+func (r *Restaurant) metaTags() []metaTag {
+	tags := []metaTag{
 		{"og:type", "restaurant"},
-		{"og:title", restaurant.Title},
-		{"og:url", restaurant.URL},
-		{"og:description", restaurant.Description},
-		{"og:image", restaurant.Image},
-		{"place:contact_data:street_address", restaurant.StreetAddress},
-		{"place:contact_data:locality", restaurant.Locality},
-		{"place:contact_data:region", restaurant.Region},
-		{"place:contact_data:postal_code", restaurant.PostalCode},
-		{"place:contact_data:country_name", restaurant.Country},
-		{"place:contact_data:phone_number", restaurant.Phone},
-		{"restaurant:menu", restaurant.MenuURL},
-		{"restaurant:reservation", restaurant.ReservationURL},
+		{"og:title", r.Title},
+		{"og:url", r.URL},
+		{"og:description", r.Description},
+		{"og:image", r.Image},
 	}
+
+	if r.StreetAddress != "" {
+		tags = append(tags, metaTag{"place:contact_data:street_address", r.StreetAddress})
+	}
+	if r.Locality != "" {
+		tags = append(tags, metaTag{"place:contact_data:locality", r.Locality})
+	}
+	if r.Region != "" {
+		tags = append(tags, metaTag{"place:contact_data:region", r.Region})
+	}
+	if r.PostalCode != "" {
+		tags = append(tags, metaTag{"place:contact_data:postal_code", r.PostalCode})
+	}
+	if r.Country != "" {
+		tags = append(tags, metaTag{"place:contact_data:country_name", r.Country})
+	}
+	if r.Phone != "" {
+		tags = append(tags, metaTag{"place:contact_data:phone_number", r.Phone})
+	}
+	if r.MenuURL != "" {
+		tags = append(tags, metaTag{"restaurant:menu", r.MenuURL})
+	}
+	if r.ReservationURL != "" {
+		tags = append(tags, metaTag{"restaurant:reservation", r.ReservationURL})
+	}
+
+	return tags
 }

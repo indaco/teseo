@@ -115,31 +115,17 @@ func (ve *VideoEpisode) ToMetaTags() templ.Component {
 				}
 			}
 		}
-
-		// Write video:actor meta tags for each actor URL
-		for _, actorURL := range ve.ActorURLs {
-			if actorURL != "" {
-				if err := teseo.WriteMetaTag(w, "video:actor", actorURL); err != nil {
-					return err
-				}
-			}
-		}
-
 		return nil
 	})
 }
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Video Episode as `template.HTML` value for Go's `html/template`.
 func (ve *VideoEpisode) ToGoHTMLMetaTags() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := ve.ToMetaTags()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	html, err := templ.ToGoHTML(context.Background(), ve.ToMetaTags())
 	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
 	}
-
 	return html, nil
 }
 
@@ -149,14 +135,8 @@ func (ve *VideoEpisode) ensureDefaults() {
 }
 
 // metaTags returns all meta tags for the VideoEpisode object, including OpenGraphObject fields and video episode-specific ones.
-func (ve *VideoEpisode) metaTags() []struct {
-	property string
-	content  string
-} {
-	return []struct {
-		property string
-		content  string
-	}{
+func (ve *VideoEpisode) metaTags() []metaTag {
+	tags := []metaTag{
 		{"og:type", "video.episode"},
 		{"og:title", ve.Title},
 		{"og:url", ve.URL},
@@ -166,6 +146,17 @@ func (ve *VideoEpisode) metaTags() []struct {
 		{"video:director", ve.DirectorURL},
 		{"video:release_date", ve.ReleaseDate},
 		{"video:series", ve.SeriesURL},
-		{"video:episode", fmt.Sprintf("%d", ve.EpisodeNumber)},
 	}
+
+	if ve.EpisodeNumber > 0 {
+		tags = append(tags, metaTag{"video:episode", fmt.Sprintf("%d", ve.EpisodeNumber)})
+	}
+
+	for _, actorURL := range ve.ActorURLs {
+		if actorURL != "" {
+			tags = append(tags, metaTag{"video:actor", actorURL})
+		}
+	}
+
+	return tags
 }

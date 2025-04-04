@@ -125,15 +125,11 @@ func (place *Place) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Place as `template.HTML` value for Go's `html/template`.
 func (place *Place) ToGoHTMLMetaTags() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := place.ToMetaTags()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	html, err := templ.ToGoHTML(context.Background(), place.ToMetaTags())
 	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
 	}
-
 	return html, nil
 }
 
@@ -143,14 +139,8 @@ func (place *Place) ensureDefaults() {
 }
 
 // metaTags returns all meta tags for the Place object, including OpenGraphObject fields and place-specific ones.
-func (place *Place) metaTags() []struct {
-	property string
-	content  string
-} {
-	return []struct {
-		property string
-		content  string
-	}{
+func (place *Place) metaTags() []metaTag {
+	return []metaTag{
 		{"og:type", "place"},
 		{"og:title", place.Title},
 		{"og:url", place.URL},
