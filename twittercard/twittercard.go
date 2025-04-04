@@ -58,12 +58,12 @@ const (
 //
 // Expected output:
 //
-//	<meta name="twitter:card" content="summary"/>
-//	<meta name="twitter:title" content="Example Title"/>
-//	<meta name="twitter:description" content="This is an example Twitter Card description."/>
-//	<meta name="twitter:image" content="https://www.example.com/image.jpg"/>
-//	<meta name="twitter:site" content="@example_site"/>
-//	<meta name="twitter:creator" content="@example_creator"/>
+//	<meta name="twitter:card" content="summary">
+//	<meta name="twitter:title" content="Example Title">
+//	<meta name="twitter:description" content="This is an example Twitter Card description.">
+//	<meta name="twitter:image" content="https://www.example.com/image.jpg">
+//	<meta name="twitter:site" content="@example_site">
+//	<meta name="twitter:creator" content="@example_creator">
 type TwitterCard struct {
 	Card        TwitterCardType // Card type, e.g., "summary", "summary_large_image", "app", "player"
 	Title       string          // Title of the content
@@ -77,7 +77,7 @@ type TwitterCard struct {
 
 // NewCard initializes a TwitterCard based on the provided type.
 func NewCard(cardType TwitterCardType, title string, description string, image string, site string, creator string) *TwitterCard {
-	return &TwitterCard{
+	tc := &TwitterCard{
 		Card:        cardType,
 		Title:       title,
 		Description: description,
@@ -85,6 +85,8 @@ func NewCard(cardType TwitterCardType, title string, description string, image s
 		Site:        site,
 		Creator:     creator,
 	}
+	tc.ensureDefaults()
+	return tc
 }
 
 // SummaryCard represents a Twitter Card of type summary.
@@ -119,12 +121,12 @@ func NewCard(cardType TwitterCardType, title string, description string, image s
 //
 // Expected output:
 //
-//	<meta name="twitter:card" content="summary"/>
-//	<meta name="twitter:title" content="Example Summary"/>
-//	<meta name="twitter:description" content="This is an example summary card."/>
-//	<meta name="twitter:image" content="https://www.example.com/summary.jpg"/>
-//	<meta name="twitter:site" content="@example_site"/>
-//	<meta name="twitter:creator" content="@example_creator"/>
+//	<meta name="twitter:card" content="summary">
+//	<meta name="twitter:title" content="Example Summary">
+//	<meta name="twitter:description" content="This is an example summary card.">
+//	<meta name="twitter:image" content="https://www.example.com/summary.jpg">
+//	<meta name="twitter:site" content="@example_site">
+//	<meta name="twitter:creator" content="@example_creator">
 func NewSummaryCard(title string, description string, image string, site string, creator string) *TwitterCard {
 	return NewCard(CardSummary, title, description, image, site, creator)
 }
@@ -161,12 +163,12 @@ func NewSummaryCard(title string, description string, image string, site string,
 //
 // Expected output:
 //
-//	<meta name="twitter:card" content="summary_large_image"/>
-//	<meta name="twitter:title" content="Example Summary Large Image"/>
-//	<meta name="twitter:description" content="This is an example large image summary card."/>
-//	<meta name="twitter:image" content="https://www.example.com/large_image.jpg"/>
-//	<meta name="twitter:site" content="@example_site"/>
-//	<meta name="twitter:creator" content="@example_creator"/>
+//	<meta name="twitter:card" content="summary_large_image">
+//	<meta name="twitter:title" content="Example Summary Large Image">
+//	<meta name="twitter:description" content="This is an example large image summary card.">
+//	<meta name="twitter:image" content="https://www.example.com/large_image.jpg">
+//	<meta name="twitter:site" content="@example_site">
+//	<meta name="twitter:creator" content="@example_creator">
 func NewSummaryLargeImageCard(title string, description string, image string, site string, creator string) *TwitterCard {
 	return NewCard(CardSummaryLargeImage, title, description, image, site, creator)
 }
@@ -203,12 +205,12 @@ func NewSummaryLargeImageCard(title string, description string, image string, si
 //
 // Expected output:
 //
-//	<meta name="twitter:card" content="app"/>
-//	<meta name="twitter:title" content="Example App"/>
-//	<meta name="twitter:description" content="This is an example app card."/>
-//	<meta name="twitter:image" content="https://www.example.com/app.jpg"/>
-//	<meta name="twitter:site" content="@example_site"/>
-//	<meta name="twitter:app:id:iphone" content="1234567890"/>
+//	<meta name="twitter:card" content="app">
+//	<meta name="twitter:title" content="Example App">
+//	<meta name="twitter:description" content="This is an example app card.">
+//	<meta name="twitter:image" content="https://www.example.com/app.jpg">
+//	<meta name="twitter:site" content="@example_site">
+//	<meta name="twitter:app:id:iphone" content="1234567890">
 func NewAppCard(title string, description string, image string, site string, appID string) *TwitterCard {
 	return &TwitterCard{
 		Card:        CardApp,
@@ -252,12 +254,12 @@ func NewAppCard(title string, description string, image string, site string, app
 //
 // Expected output:
 //
-//	<meta name="twitter:card" content="player"/>
-//	<meta name="twitter:title" content="Example Player"/>
-//	<meta name="twitter:description" content="This is an example player card."/>
-//	<meta name="twitter:image" content="https://www.example.com/player.jpg"/>
-//	<meta name="twitter:site" content="@example_site"/>
-//	<meta name="twitter:player" content="https://www.example.com/player"/>
+//	<meta name="twitter:card" content="player">
+//	<meta name="twitter:title" content="Example Player">
+//	<meta name="twitter:description" content="This is an example player card.">
+//	<meta name="twitter:image" content="https://www.example.com/player.jpg">
+//	<meta name="twitter:site" content="@example_site">
+//	<meta name="twitter:player" content="https://www.example.com/player">
 func NewPlayerCard(title string, description string, image string, site string, playerURL string) *TwitterCard {
 	return &TwitterCard{
 		Card:        CardPlayer,
@@ -287,64 +289,62 @@ func (tc *TwitterCard) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Twitter Card as `template.HTML` value for Go's html/template
 func (tc *TwitterCard) ToGoHTMLMetaTags() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := tc.ToMetaTags()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
+	html, err := templ.ToGoHTML(context.Background(), tc.ToMetaTags())
 	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
 	}
 
 	return html, nil
 }
 
-// metaTags returns the meta tags for the Twitter Card as a slice of name-content pairs
-func (tc *TwitterCard) metaTags() []struct {
+// metaTag represents a single Twitter Card meta tag with a name and content.
+// Used internally to collect metadata before rendering as HTML <meta> elements.
+type metaTag struct {
 	name    string
 	content string
-} {
-	metaTags := []struct {
-		name    string
-		content string
-	}{
+}
+
+// metaTags returns the meta tags for the Twitter Card as a slice of name-content pairs
+func (tc *TwitterCard) metaTags() []metaTag {
+	tags := []metaTag{
 		{"twitter:card", tc.Card.String()},
 		{"twitter:title", tc.Title},
 		{"twitter:description", tc.Description},
 	}
 
 	if tc.Image != "" {
-		metaTags = append(metaTags, struct {
+		tags = append(tags, struct {
 			name    string
 			content string
 		}{"twitter:image", tc.Image})
 	}
 	if tc.Site != "" {
-		metaTags = append(metaTags, struct {
+		tags = append(tags, struct {
 			name    string
 			content string
 		}{"twitter:site", tc.Site})
 	}
 	if tc.Creator != "" && (tc.Card == CardSummary || tc.Card == CardSummaryLargeImage) {
-		metaTags = append(metaTags, struct {
+		tags = append(tags, struct {
 			name    string
 			content string
 		}{"twitter:creator", tc.Creator})
 	}
 	if tc.AppID != "" && tc.Card == CardApp {
-		metaTags = append(metaTags, struct {
+		tags = append(tags, struct {
 			name    string
 			content string
 		}{"twitter:app:id:iphone", tc.AppID})
 	}
 	if tc.PlayerURL != "" && tc.Card == CardPlayer {
-		metaTags = append(metaTags, struct {
+		tags = append(tags, struct {
 			name    string
 			content string
 		}{"twitter:player", tc.PlayerURL})
 	}
 
-	return metaTags
+	return tags
 }
 
 func (tc *TwitterCard) ensureDefaults() {
