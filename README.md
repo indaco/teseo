@@ -399,50 +399,28 @@ This works for all supported Twitter Cards (e.g., App Card, Player Card, etc.).
 
 ## Demo
 
-A sample website is available in the **_demos** folder, which demonstrates how to integrate teseo for generating structured data and metadata. This demo serves as a reference for implementing Schema.org JSON-LD, OpenGraph, and Twitter Cards in your own web applications.
+Check out the _demos folder for real-world usage of:
 
-Feel free to explore the demo to see real-world usage of the library and how easily you can add SEO-friendly metadata to your Go web projects.
+- JSON-LD structured data
+- OpenGraph meta tags
+- Twitter Card metadata
 
 ### Run the demo
 
 ```bash
 # Taskfile
-task live # http://localhost:7332
+task dev # http://localhost:7332
+
 # Makefile
-make live # http://localhost:7332
+make dev # http://localhost:7332
 ```
 
 ## Contributing
 
-Contributions are welcome! Feel free to open an issue or submit a pull request.
+Contributions are welcome!
 
-### Development Environment Setup
-
-To set up a development environment for this repository, you can use [devbox](https://www.jetify.com/devbox) along with the provided `devbox.json` configuration file.
-
-1. Install devbox by following the instructions in the [devbox documentation](https://www.jetify.com/devbox/docs/installing_devbox/).
-2. Clone this repository to your local machine.
-3. Navigate to the root directory of the cloned repository.
-4. Run `devbox install` to install all packages mentioned in the `devbox.json` file.
-5. Run `devbox shell --pure` to start a new shell with access to the environment.
-6. Once the devbox environment is set up, you can start developing, testing, and contributing to the repository.
-
-### Running Tasks
-
-This project provides both a `Makefile` and a `Taskfile` for running various tasks. You can use either `make` or `task` to execute the tasks, depending on your preference.
-
-To view all available tasks, run:
-
-- **Makefile**: `make help`
-- **Taskfile**: `task --list-all`
-
-Available tasks:
-
-```bash
-live      # Run the demos live server with templ watch mode.
-templ     # Run templ fmt and templ generate commands.
-```
+See the [Contributing Guide](/CONTRIBUTING.md) for setup instructions.
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License – see the [LICENSE](./LICENSE) file for details.
