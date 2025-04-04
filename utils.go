@@ -6,18 +6,25 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
+	"sync"
 	"time"
+)
+
+var (
+	charset      = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	seededRand   = rand.New(rand.NewSource(time.Now().UnixNano()))
+	seededRandMu sync.Mutex
 )
 
 // GenerateUniqueKey generates a unique key using math/rand.
 func GenerateUniqueKey() string {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	var seededRand = rand.New(rand.NewSource(time.Now().UnixNano()))
-
-	b := make([]byte, 16)
+	const length = 16
+	b := make([]byte, length)
+	seededRandMu.Lock()
 	for i := range b {
 		b[i] = charset[seededRand.Intn(len(charset))]
 	}
+	seededRandMu.Unlock()
 	return string(b)
 }
 
@@ -29,8 +36,8 @@ func GetFullURL(r *http.Request) string {
 		scheme = "https"
 	}
 
-	// Construct the full URL using the scheme, host, and path.
-	return fmt.Sprintf("%s://%s%s", scheme, r.Host, r.URL.Path)
+	// Construct the full URL using the scheme, host, and path including query string.
+	return fmt.Sprintf("%s://%s%s", scheme, r.Host, r.URL.RequestURI())
 }
 
 // WriteMetaTag writes a single HTML meta tag to the provided writer.
@@ -38,7 +45,7 @@ func WriteMetaTag(w io.Writer, property, content string) error {
 	if content == "" {
 		return nil
 	}
-	_, err := io.WriteString(w, fmt.Sprintf(`<meta property="%s" content="%s" />`, html.EscapeString(property), html.EscapeString(content)))
+	_, err := io.WriteString(w, fmt.Sprintf(`<meta property="%s" content="%s" >`, html.EscapeString(property), html.EscapeString(content)))
 	if err != nil {
 		return fmt.Errorf("failed to write %s meta tag: %w", property, err)
 	}
