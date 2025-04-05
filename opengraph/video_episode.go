@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -121,12 +120,7 @@ func (ve *VideoEpisode) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Video Episode as `template.HTML` value for Go's `html/template`.
 func (ve *VideoEpisode) ToGoHTMLMetaTags() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), ve.ToMetaTags())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(ve.ToMetaTags())
 }
 
 // ensureDefaults sets default values for VideoEpisode.

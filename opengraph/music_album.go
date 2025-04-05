@@ -4,7 +4,6 @@ import (
 	"context"
 	"html/template"
 	"io"
-	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -105,12 +104,7 @@ func (ma *MusicAlbum) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Music Album as `template.HTML` value for Go's `html/template`.
 func (ma *MusicAlbum) ToGoHTMLMetaTags() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), ma.ToMetaTags())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(ma.ToMetaTags())
 }
 
 // ensureDefaults sets default values for MusicAlbum.

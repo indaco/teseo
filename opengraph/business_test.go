@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -108,6 +109,36 @@ func TestBusiness_metaTags_EmptyValues(t *testing.T) {
 	}
 	if !websiteSeen {
 		t.Errorf("website tag was missing")
+	}
+}
+
+func TestBusiness_ToMetaTags_WriteError(t *testing.T) {
+	b := NewBusiness(
+		"Example",
+		"https://example.com",
+		"Desc",
+		"https://img.com/example.jpg",
+		"123 St",
+		"City",
+		"Region",
+		"00000",
+		"Country",
+		"email@example.com",
+		"000-0000",
+		"https://example.com",
+	)
+	b.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := b.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 

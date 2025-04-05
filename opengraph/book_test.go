@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -120,6 +121,32 @@ func TestBook_metaTags_Duplicates(t *testing.T) {
 	}
 	if count != 2 {
 		t.Errorf("expected 2 book:tag meta tags, got %d", count)
+	}
+}
+
+func TestBook_ToMetaTags_WriteError(t *testing.T) {
+	book := NewBook(
+		"Test Book",
+		"https://example.com/book",
+		"A compelling description.",
+		"https://example.com/cover.jpg",
+		"9876543210",
+		"2024-04-01",
+		[]string{"https://example.com/author/john"},
+		[]string{"fiction", "mystery"},
+	)
+	book.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := book.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 

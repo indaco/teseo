@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -77,6 +78,28 @@ func TestMusicRadioStation_metaTags_EmptyValues(t *testing.T) {
 	}
 	if !foundTitle {
 		t.Errorf("expected og:title to be 'Radio'")
+	}
+}
+
+func TestMusicRadioStation_ToMetaTags_WriteError(t *testing.T) {
+	mrs := NewMusicRadioStation(
+		"Morning Beats",
+		"https://radio.com/morning",
+		"Start your day right",
+		"https://radio.com/morning.jpg",
+	)
+	mrs.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := mrs.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 

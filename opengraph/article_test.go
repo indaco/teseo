@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -107,6 +108,28 @@ func TestArticleMetaTags_DuplicateKeysAllowed(t *testing.T) {
 	}
 	if count != 2 {
 		t.Errorf("expected 2 article:tag meta tags, got %d", count)
+	}
+}
+
+func TestArticle_ToMetaTags_WriteError(t *testing.T) {
+	art := &Article{
+		OpenGraphObject: OpenGraphObject{
+			Title: "Test Article",
+			URL:   "https://example.com",
+		},
+	}
+	art.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := art.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 

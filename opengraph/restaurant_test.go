@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -49,6 +50,36 @@ func TestRestaurant_metaTags(t *testing.T) {
 	assertHas("place:contact_data:phone_number")
 	assertHas("restaurant:menu")
 	assertHas("restaurant:reservation")
+}
+
+func TestRestaurant_ToMetaTags_WriteError(t *testing.T) {
+	r := NewRestaurant(
+		"Example Restaurant",
+		"https://www.example.com/restaurant/example-restaurant",
+		"This is an example restaurant description.",
+		"https://www.example.com/images/restaurant.jpg",
+		"123 Food Street",
+		"Gourmet City",
+		"CA",
+		"12345",
+		"USA",
+		"+1-800-FOOD-123",
+		"https://www.example.com/menu",
+		"https://www.example.com/reservations",
+	)
+	r.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := r.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
+	}
 }
 
 func TestRestaurant_ToGoHTMLMetaTags_Render(t *testing.T) {

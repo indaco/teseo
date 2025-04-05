@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -79,6 +80,30 @@ func TestProduct_metaTags_SkipEmptyValues(t *testing.T) {
 		if tag.property == "product:price:currency" && tag.content == "" {
 			t.Errorf("empty currency should not be rendered")
 		}
+	}
+}
+
+func TestProduct_ToMetaTags_WriteError(t *testing.T) {
+	p := NewProduct(
+		"Noise-Cancelling Headphones",
+		"https://example.com/headphones",
+		"Wireless over-ear headphones with noise cancellation",
+		"https://example.com/img/headphones.jpg",
+		"199.99",
+		"USD",
+	)
+	p.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := p.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 

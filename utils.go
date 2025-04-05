@@ -1,13 +1,18 @@
 package teseo
 
 import (
+	"context"
 	"fmt"
 	"html"
+	"html/template"
 	"io"
+	"log"
 	"math/rand"
 	"net/http"
 	"sync"
 	"time"
+
+	"github.com/a-h/templ"
 )
 
 var (
@@ -50,4 +55,13 @@ func WriteMetaTag(w io.Writer, property, content string) error {
 		return fmt.Errorf("failed to write %s meta tag: %w", property, err)
 	}
 	return nil
+}
+
+func RenderToHTML(c templ.Component) (template.HTML, error) {
+	html, err := templ.ToGoHTML(context.Background(), c)
+	if err != nil {
+		log.Printf("failed to convert to html: %v", err)
+		return "", err
+	}
+	return html, nil
 }

@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 
@@ -75,6 +76,32 @@ func TestVideo_metaTags_SkipEmptyValues(t *testing.T) {
 		if tag.property == "video:actor" {
 			t.Errorf("expected empty actor URLs to be skipped, got: %q", tag.content)
 		}
+	}
+}
+
+func TestVideo_ToMetaTags_WriteError(t *testing.T) {
+	video := NewVideo(
+		"Example Video",
+		"https://example.com/video",
+		"Description here",
+		"https://example.com/image.jpg",
+		"300",
+		[]string{"https://example.com/actor1"},
+		"https://example.com/director",
+		"2024-09-15",
+	)
+	video.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := video.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 

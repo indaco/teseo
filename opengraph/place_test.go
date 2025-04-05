@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -103,6 +104,35 @@ func TestPlace_metaTags_EmptyValuesAreRenderedIfZeroValue(t *testing.T) {
 	}
 	if !foundLon {
 		t.Errorf("expected longitude to be rendered as 0.0000")
+	}
+}
+
+func TestPlace_ToMetaTags_WriteError(t *testing.T) {
+	p := NewPlace(
+		"Times Square",
+		"https://example.com/ts",
+		"Famous NYC location",
+		"https://example.com/img.png",
+		40.7580,
+		-73.9855,
+		"Broadway & 7th",
+		"New York",
+		"NY",
+		"10036",
+		"USA",
+	)
+	p.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := p.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 

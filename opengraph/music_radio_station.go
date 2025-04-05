@@ -4,7 +4,6 @@ import (
 	"context"
 	"html/template"
 	"io"
-	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -89,12 +88,7 @@ func (mrs *MusicRadioStation) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Music Radio Station as `template.HTML` value for Go's `html/template`.
 func (mrs *MusicRadioStation) ToGoHTMLMetaTags() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), mrs.ToMetaTags())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(mrs.ToMetaTags())
 }
 
 // ensureDefaults sets default values for MusicRadioStation.

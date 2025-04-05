@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -71,6 +72,26 @@ func TestProfile_metaTags_SkipEmptyValues(t *testing.T) {
 		if strings.HasPrefix(tag.property, "profile:") && tag.content == "" {
 			t.Errorf("should skip tag with empty value: %s", tag.property)
 		}
+	}
+}
+
+func TestProfile_ToMetaTags_WriteError(t *testing.T) {
+	p := NewProfile(
+		"Dr. Profile", "Dr.", "Profile", "drprofile", "non-binary",
+		"https://example.com/profile", "Profile description", "https://example.com/img.jpg",
+	)
+	p.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := p.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 

@@ -81,6 +81,28 @@ func TestWebSite_ToMetaTags_Render(t *testing.T) {
 	}
 }
 
+func TestWebSite_ToMetaTags_WriteError(t *testing.T) {
+	ws := NewWebSite(
+		"Example Website",
+		"https://example.com",
+		"Description here",
+		"https://example.com/image.jpg",
+	)
+	ws.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := ws.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
+	}
+}
+
 func TestWebSite_ToGoHTMLMetaTags_Render(t *testing.T) {
 	ws := NewWebSite(
 		"Example Website",

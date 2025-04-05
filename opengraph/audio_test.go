@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -97,6 +98,30 @@ func TestAudio_metaTags_SkipEmptyValues(t *testing.T) {
 	}
 	if !foundMusician {
 		t.Errorf("expected music:musician tag to be present")
+	}
+}
+
+func TestAudio_ToMetaTags_WriteError(t *testing.T) {
+	audio := NewAudio(
+		"Track Title",
+		"https://example.com/audio",
+		"Desc",
+		"https://example.com/image.jpg",
+		"180",
+		"https://example.com/artist",
+	)
+	audio.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := audio.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 

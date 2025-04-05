@@ -4,7 +4,6 @@ import (
 	"context"
 	"html/template"
 	"io"
-	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -89,12 +88,7 @@ func (ws *WebSite) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph WebSite as `template.HTML` value for Go's `html/template`.
 func (ws *WebSite) ToGoHTMLMetaTags() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), ws.ToMetaTags())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(ws.ToMetaTags())
 }
 
 // ensureDefaults sets default values for WebSite.

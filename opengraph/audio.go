@@ -4,7 +4,6 @@ import (
 	"context"
 	"html/template"
 	"io"
-	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -99,12 +98,7 @@ func (audio *Audio) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Open Graph Audio as `template.HTML` value for Go's `html/template`.
 func (audio *Audio) ToGoHTMLMetaTags() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), audio.ToMetaTags())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(audio.ToMetaTags())
 }
 
 // ensureDefaults sets default values for Audio.

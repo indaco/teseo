@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -101,6 +102,31 @@ func TestEvent_metaTags_EmptyValues(t *testing.T) {
 
 	if !startSeen || !endSeen || !locSeen {
 		t.Errorf("some tags were missing from metaTags")
+	}
+}
+
+func TestEvent_ToMetaTags_WriteError(t *testing.T) {
+	e := NewEvent(
+		"Dev Meetup",
+		"https://dev.com/meetup",
+		"A developer event",
+		"https://dev.com/img.png",
+		"2024-07-01T09:00:00Z",
+		"2024-07-01T17:00:00Z",
+		"City Hub",
+	)
+	e.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := e.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 

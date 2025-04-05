@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -43,6 +44,35 @@ func TestVideoMovie_metaTags_GeneratesCorrectTags(t *testing.T) {
 		if tag != actual[i] {
 			t.Errorf("expected tag %d to be %+v, got %+v", i, tag, actual[i])
 		}
+	}
+}
+
+func TestVideoMovie_ToMetaTags_WriteError(t *testing.T) {
+	video := NewVideoMovie(
+		"Example Movie",
+		"https://www.example.com/video/movie/example-movie",
+		"This is an example movie description.",
+		"https://www.example.com/images/movie.jpg",
+		"7200",
+		[]string{
+			"https://www.example.com/actors/jane-doe",
+			"https://www.example.com/actors/john-doe",
+		},
+		"https://www.example.com/directors/jane-director",
+		"2024-09-15",
+	)
+	video.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := video.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 

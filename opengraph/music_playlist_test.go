@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -85,6 +86,30 @@ func TestMusicPlaylist_metaTags_EmptyValues(t *testing.T) {
 	}
 	if !validSeen {
 		t.Errorf("valid song URL was not included")
+	}
+}
+
+func TestMusicPlaylist_ToMetaTags_WriteError(t *testing.T) {
+	pl := NewMusicPlaylist(
+		"Focus Playlist",
+		"https://example.com/focus",
+		"Focus music",
+		"https://example.com/focus.jpg",
+		[]string{"https://example.com/songs/alpha"},
+		"2400",
+	)
+	pl.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := pl.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 

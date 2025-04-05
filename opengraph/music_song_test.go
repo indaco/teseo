@@ -1,6 +1,7 @@
 package opengraph
 
 import (
+	"context"
 	"strings"
 	"testing"
 )
@@ -88,6 +89,31 @@ func TestMusicSong_metaTags_EmptyMusicianFiltered(t *testing.T) {
 	}
 	if !musicianFound {
 		t.Errorf("valid musician not rendered")
+	}
+}
+
+func TestMusicSong_ToMetaTags_WriteError(t *testing.T) {
+	song := NewMusicSong(
+		"Final Tune",
+		"https://example.com/final",
+		"The closing track",
+		"https://example.com/final.jpg",
+		"240",
+		"https://example.com/album/final",
+		[]string{"https://example.com/musician"},
+	)
+	song.ensureDefaults()
+
+	writer := &failingWriter{}
+
+	err := song.ToMetaTags().Render(context.Background(), writer)
+	if err == nil {
+		t.Fatal("expected error but got nil")
+	}
+
+	expected := "failed to write og:type meta tag"
+	if !strings.Contains(err.Error(), expected) {
+		t.Errorf("unexpected error message: %v", err)
 	}
 }
 
