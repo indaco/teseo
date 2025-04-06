@@ -54,6 +54,26 @@ import (
 // 		"worksFor": {"@type": "Organization", "name": "Example Company"}
 // 	}
 
+// Person represents a Schema.org Person object
+// For more details about the meaning of the properties see: https://schema.org/Person
+type Person struct {
+	Context     string         `json:"@context"`
+	Type        string         `json:"@type"`
+	Name        string         `json:"name,omitempty"`
+	URL         string         `json:"url,omitempty"`
+	Email       string         `json:"email,omitempty"`
+	Image       *ImageObject   `json:"image,omitempty"`
+	JobTitle    string         `json:"jobTitle,omitempty"`
+	WorksFor    *Organization  `json:"worksFor,omitempty"`
+	SameAs      []string       `json:"sameAs,omitempty"`
+	Gender      string         `json:"gender,omitempty"`
+	BirthDate   string         `json:"birthDate,omitempty"`
+	Nationality string         `json:"nationality,omitempty"`
+	Telephone   string         `json:"telephone,omitempty"`
+	Address     *PostalAddress `json:"address,omitempty"`
+	Affiliation *Organization  `json:"affiliation,omitempty"`
+}
+
 // PostalAddress represents a Schema.org PostalAddress object
 type PostalAddress struct {
 	Type            string `json:"@type"`
@@ -92,6 +112,25 @@ func NewPerson(name string, url string, email string, image *ImageObject, jobTit
 	return person
 }
 
+// Validate checks for recommended or required fields in Person.
+func (p *Person) Validate() []string {
+	var warnings []string
+
+	if p.Name == "" {
+		warnings = append(warnings, "missing recommended field: name")
+	}
+
+	if p.Email == "" {
+		warnings = append(warnings, "missing recommended field: email")
+	}
+
+	if p.JobTitle == "" {
+		warnings = append(warnings, "missing recommended field: jobTitle")
+	}
+
+	return warnings
+}
+
 // ToJsonLd converts the Person struct to a JSON-LD `templ.Component`.
 func (p *Person) ToJsonLd() templ.Component {
 	p.ensureDefaults()
@@ -101,12 +140,7 @@ func (p *Person) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the Person struct as `template.HTML` value for Go's `html/template`.
 func (p *Person) ToGoHTMLJsonLd() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), p.ToJsonLd())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(p.ToJsonLd())
 }
 
 // ensureDefaults sets default values for Person and its nested objects if they are not already set.

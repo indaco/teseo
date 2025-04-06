@@ -1,15 +1,5 @@
 package schemaorg
 
-import (
-	"context"
-	"fmt"
-	"html/template"
-	"log"
-
-	"github.com/a-h/templ"
-	"github.com/indaco/teseo"
-)
-
 // Common type definitions used across multiple JSON-LD entities
 
 // ContactPoint represents a Schema.org ContactPoint object
@@ -34,73 +24,6 @@ func (img *ImageObject) ensureDefaults() {
 	if img.Type == "" {
 		img.Type = "ImageObject"
 	}
-}
-
-// Organization represents a Schema.org Organization object
-// For more details about the meaning of the properties see: https://schema.org/Organization
-type Organization struct {
-	Context       string         `json:"@context"`
-	Type          string         `json:"@type"`
-	Name          string         `json:"name,omitempty"`
-	URL           string         `json:"url,omitempty"`
-	Logo          *ImageObject   `json:"logo,omitempty"`
-	ContactPoints []ContactPoint `json:"contactPoint,omitempty"`
-	SameAs        []string       `json:"sameAs,omitempty"`
-}
-
-func (org *Organization) ensureDefaults() {
-	if org.Context == "" {
-		org.Context = "https://schema.org"
-	}
-
-	if org.Type == "" {
-		org.Type = "Organization"
-	}
-
-	if org.Logo != nil {
-		org.Logo.ensureDefaults()
-	}
-}
-
-// ToJsonLd converts the Organization struct to a JSON-LD `templ.Component`.
-func (org *Organization) ToJsonLd() templ.Component {
-	org.ensureDefaults()
-	id := fmt.Sprintf("%s-%s", "org", teseo.GenerateUniqueKey())
-	return templ.JSONScript(id, org).WithType("application/ld+json")
-}
-
-// ToGoHTMLJsonLd renders the Organization struct as `template.HTML` value for Go's `html/template`.
-func (org *Organization) ToGoHTMLJsonLd() (template.HTML, error) {
-	// Create the templ component.
-	templComponent := org.ToJsonLd()
-
-	// Render the templ component to a `template.HTML` value.
-	html, err := templ.ToGoHTML(context.Background(), templComponent)
-	if err != nil {
-		log.Fatalf("failed to convert to html: %v", err)
-	}
-
-	return html, nil
-}
-
-// Person represents a Schema.org Person object
-// For more details about the meaning of the properties see: https://schema.org/Person
-type Person struct {
-	Context     string         `json:"@context"`
-	Type        string         `json:"@type"`
-	Name        string         `json:"name,omitempty"`
-	URL         string         `json:"url,omitempty"`
-	Email       string         `json:"email,omitempty"`
-	Image       *ImageObject   `json:"image,omitempty"`
-	JobTitle    string         `json:"jobTitle,omitempty"`
-	WorksFor    *Organization  `json:"worksFor,omitempty"`
-	SameAs      []string       `json:"sameAs,omitempty"`
-	Gender      string         `json:"gender,omitempty"`
-	BirthDate   string         `json:"birthDate,omitempty"`
-	Nationality string         `json:"nationality,omitempty"`
-	Telephone   string         `json:"telephone,omitempty"`
-	Address     *PostalAddress `json:"address,omitempty"`
-	Affiliation *Organization  `json:"affiliation,omitempty"`
 }
 
 // ListItem represents a Schema.org ListItem object
