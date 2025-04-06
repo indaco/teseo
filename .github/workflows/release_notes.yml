@@ -1,0 +1,27 @@
+name: Create Release Notes
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  create-release-notes:
+    runs-on: ubuntu-latest
+    environment:
+      name: Release
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+          name: ${{ github.event.release.tag_name }}
+          draft: false
+          prerelease: false
+          make_latest: 'true'
+          token: ${{ secrets.TESEO_TOKEN }}
+          body_path: ${{ github.workspace }}/.changes/${{ github.event.release.tag_name }}.md
+          generate_release_notes: false
