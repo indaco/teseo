@@ -90,6 +90,30 @@ func NewWebSite(url string, name string, alternateName string, description strin
 	return website
 }
 
+func (ws *WebSite) Validate() []string {
+	var warnings []string
+
+	if ws.URL == "" {
+		warnings = append(warnings, "missing recommended field: url")
+	}
+
+	if ws.Name == "" {
+		warnings = append(warnings, "missing recommended field: name")
+	}
+
+	if ws.Description == "" {
+		warnings = append(warnings, "missing recommended field: description")
+	}
+
+	if ws.PotentialAction != nil {
+		if ws.PotentialAction.Target == nil || ws.PotentialAction.Target.URLTemplate == "" {
+			warnings = append(warnings, "potentialAction.target.urlTemplate is recommended when potentialAction is set")
+		}
+	}
+
+	return warnings
+}
+
 // ToJsonLd converts the WebSite struct to a JSON-LD `templ.Component`.
 func (ws *WebSite) ToJsonLd() templ.Component {
 	ws.ensureDefaults()
@@ -99,12 +123,7 @@ func (ws *WebSite) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the WebSite struct as `template.HTML` value for Go's `html/template`.
 func (ws *WebSite) ToGoHTMLJsonLd() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), ws.ToJsonLd())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(ws.ToJsonLd())
 }
 
 func (ws *WebSite) ensureDefaults() {
@@ -112,7 +131,7 @@ func (ws *WebSite) ensureDefaults() {
 		ws.Context = "https://schema.org"
 	}
 
-	if ws.Context == "" {
+	if ws.Type == "" {
 		ws.Type = "WebSite"
 	}
 
