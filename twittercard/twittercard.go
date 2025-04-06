@@ -4,7 +4,6 @@ import (
 	"context"
 	"html/template"
 	"io"
-	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -23,6 +22,8 @@ const (
 	CardApp               TwitterCardType = "app"
 	CardPlayer            TwitterCardType = "player"
 )
+
+var WriteMetaTag = teseo.WriteMetaTag
 
 // TwitterCard contains information for generating Twitter Card meta tags.
 // For more details about the meaning of the properties see: https://developer.x.com/en/docs/x-for-websites/cards/overview/markup
@@ -278,7 +279,7 @@ func (tc *TwitterCard) ToMetaTags() templ.Component {
 		// Write each meta tag using the writeMetaTag helper
 		for _, tag := range tc.metaTags() {
 			if tag.content != "" {
-				if err := teseo.WriteMetaTag(w, tag.name, tag.content); err != nil {
+				if err := WriteMetaTag(w, tag.name, tag.content); err != nil {
 					return err
 				}
 			}
@@ -289,13 +290,7 @@ func (tc *TwitterCard) ToMetaTags() templ.Component {
 
 // ToGoHTMLMetaTags generates the HTML meta tags for the Twitter Card as `template.HTML` value for Go's html/template
 func (tc *TwitterCard) ToGoHTMLMetaTags() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), tc.ToMetaTags())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-
-	return html, nil
+	return teseo.RenderToHTML(tc.ToMetaTags())
 }
 
 // metaTag represents a single Twitter Card meta tag with a name and content.
@@ -314,34 +309,19 @@ func (tc *TwitterCard) metaTags() []metaTag {
 	}
 
 	if tc.Image != "" {
-		tags = append(tags, struct {
-			name    string
-			content string
-		}{"twitter:image", tc.Image})
+		tags = append(tags, metaTag{"twitter:image", tc.Image})
 	}
 	if tc.Site != "" {
-		tags = append(tags, struct {
-			name    string
-			content string
-		}{"twitter:site", tc.Site})
+		tags = append(tags, metaTag{"twitter:site", tc.Site})
 	}
 	if tc.Creator != "" && (tc.Card == CardSummary || tc.Card == CardSummaryLargeImage) {
-		tags = append(tags, struct {
-			name    string
-			content string
-		}{"twitter:creator", tc.Creator})
+		tags = append(tags, metaTag{"twitter:creator", tc.Creator})
 	}
 	if tc.AppID != "" && tc.Card == CardApp {
-		tags = append(tags, struct {
-			name    string
-			content string
-		}{"twitter:app:id:iphone", tc.AppID})
+		tags = append(tags, metaTag{"twitter:app:id:iphone", tc.AppID})
 	}
 	if tc.PlayerURL != "" && tc.Card == CardPlayer {
-		tags = append(tags, struct {
-			name    string
-			content string
-		}{"twitter:player", tc.PlayerURL})
+		tags = append(tags, metaTag{"twitter:player", tc.PlayerURL})
 	}
 
 	return tags

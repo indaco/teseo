@@ -3,6 +3,8 @@ package twittercard
 import (
 	"bytes"
 	"context"
+	"fmt"
+	"io"
 	"strings"
 	"testing"
 )
@@ -91,6 +93,38 @@ func TestToMetaTags_Render(t *testing.T) {
 	}
 }
 
+func TestMetaTags_AppCardIncludesAppID(t *testing.T) {
+	card := &TwitterCard{
+		Card:        CardApp,
+		Title:       "App Title",
+		Description: "App Description",
+		AppID:       "9876543210",
+	}
+
+	tags := card.metaTags()
+
+	found := false
+	for _, tag := range tags {
+		if tag.name == "twitter:app:id:iphone" && tag.content == "9876543210" {
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		t.Errorf("expected twitter:app:id:iphone tag to be included with correct value")
+	}
+}
+
+func TestEnsureDefaults_SetsDefaultCardType(t *testing.T) {
+	card := &TwitterCard{} // Card is empty
+	card.ensureDefaults()
+
+	if card.Card != CardSummary {
+		t.Errorf("expected default card type to be CardSummary, got %s", card.Card)
+	}
+}
+
 func TestToGoHTMLMetaTags_Output(t *testing.T) {
 	card := NewPlayerCard("Title", "Desc", "https://img.jpg", "@site", "https://player.url")
 	html, err := card.ToGoHTMLMetaTags()
@@ -100,5 +134,23 @@ func TestToGoHTMLMetaTags_Output(t *testing.T) {
 
 	if !strings.Contains(string(html), "twitter:player") {
 		t.Errorf("expected twitter:player in HTML output")
+	}
+}
+
+func TestToMetaTags_WriteMetaTagError(t *testing.T) {
+	// Backup and replace WriteMetaTag
+	original := WriteMetaTag
+	defer func() { WriteMetaTag = original }()
+
+	WriteMetaTag = func(w io.Writer, property, content string) error {
+		return fmt.Errorf("simulated failure on property: %s", property)
+	}
+
+	card := NewSummaryCard("Title", "Desc", "https://img.jpg", "@site", "@creator")
+
+	var buf bytes.Buffer
+	err := card.ToMetaTags().Render(context.Background(), &buf)
+	if err == nil || !strings.Contains(err.Error(), "simulated failure") {
+		t.Errorf("expected simulated failure, got: %v", err)
 	}
 }
