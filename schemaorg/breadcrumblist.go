@@ -1,10 +1,8 @@
 package schemaorg
 
 import (
-	"context"
 	"fmt"
 	"html/template"
-	"log"
 	"net/url"
 	"strings"
 	"unicode"
@@ -79,13 +77,15 @@ type BreadcrumbList struct {
 	ItemListElement []ListItem `json:"itemListElement"`
 }
 
-// NewBreadcrumbList initializes an BreadcrumbList with default context and type.
+// NewBreadcrumbList initializes a BreadcrumbList with default context and type.
 func NewBreadcrumbList(listItem []ListItem) *BreadcrumbList {
-	return &BreadcrumbList{
+	b := &BreadcrumbList{
 		Context:         "https://schema.org",
 		Type:            "BreadcrumbList",
 		ItemListElement: listItem,
 	}
+	b.ensureDefaults()
+	return b
 }
 
 // NewBreadcrumbListFromUrl initializes an BreadcrumbList from the URL string.
@@ -97,6 +97,29 @@ func NewBreadcrumbListFromUrl(url string) (*BreadcrumbList, error) {
 	return bcl, nil
 }
 
+// Validate checks if the BreadcrumbList has the required structure.
+func (bcl *BreadcrumbList) Validate() []string {
+	var warnings []string
+
+	if len(bcl.ItemListElement) == 0 {
+		warnings = append(warnings, "BreadcrumbList should contain at least one item")
+	}
+
+	for i, item := range bcl.ItemListElement {
+		if item.Name == "" {
+			warnings = append(warnings, fmt.Sprintf("ListItem at position %d is missing a name", i+1))
+		}
+		if item.Item == "" {
+			warnings = append(warnings, fmt.Sprintf("ListItem at position %d is missing a URL", i+1))
+		}
+		if item.Position == 0 {
+			warnings = append(warnings, fmt.Sprintf("ListItem at position %d is missing a valid position", i+1))
+		}
+	}
+
+	return warnings
+}
+
 // ToJsonLd converts the BreadcrumbList struct to a JSON-LD `templ.Component`.
 func (bcl *BreadcrumbList) ToJsonLd() templ.Component {
 	bcl.ensureDefaults()
@@ -106,12 +129,7 @@ func (bcl *BreadcrumbList) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the BreadcrumbList struct as `template.HTML` value for Go's `html/template`.
 func (bcl *BreadcrumbList) ToGoHTMLJsonLd() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), bcl.ToJsonLd())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(bcl.ToJsonLd())
 }
 
 func (bcl *BreadcrumbList) ensureDefaults() {
@@ -125,7 +143,9 @@ func (bcl *BreadcrumbList) ensureDefaults() {
 
 	// Loop over each ListItem in ile and set its Type to "ListItem"
 	for i := range bcl.ItemListElement {
-		bcl.ItemListElement[i].Type = "ListItem"
+		if bcl.ItemListElement[i].Type == "" {
+			bcl.ItemListElement[i].Type = "ListItem"
+		}
 	}
 }
 

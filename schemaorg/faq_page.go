@@ -1,10 +1,8 @@
 package schemaorg
 
 import (
-	"context"
 	"fmt"
 	"html/template"
-	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -102,6 +100,24 @@ func NewAnswer(text string) *Answer {
 	return answer
 }
 
+func (fp *FAQPage) Validate() []string {
+	var warnings []string
+	if len(fp.MainEntity) == 0 {
+		warnings = append(warnings, "FAQPage should contain at least one question")
+	}
+	for i, q := range fp.MainEntity {
+		if q.Name == "" {
+			warnings = append(warnings, fmt.Sprintf("Question %d is missing a name", i+1))
+		}
+		if q.AcceptedAnswer == nil {
+			warnings = append(warnings, fmt.Sprintf("Question %d is missing an accepted answer", i+1))
+		} else if q.AcceptedAnswer.Text == "" {
+			warnings = append(warnings, fmt.Sprintf("Answer for question %d is missing text", i+1))
+		}
+	}
+	return warnings
+}
+
 // ToJsonLd converts the FAQPage struct to a JSON-LD `templ.Component`.
 func (fp *FAQPage) ToJsonLd() templ.Component {
 	fp.ensureDefaults()
@@ -111,12 +127,7 @@ func (fp *FAQPage) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the FAQPage struct as`template.HTML` value for Go's `html/template`.
 func (fp *FAQPage) ToGoHTMLJsonLd() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), fp.ToJsonLd())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(fp.ToJsonLd())
 }
 
 // ensureDefaults sets default values for FAQPage, Question, and Answer if they are not already set.

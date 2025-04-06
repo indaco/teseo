@@ -1,10 +1,8 @@
 package schemaorg
 
 import (
-	"context"
 	"fmt"
 	"html/template"
-	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -102,6 +100,25 @@ func NewWebPage(url string, name string, headline string, description string, ab
 	return webpage
 }
 
+func (wp *WebPage) Validate() []string {
+	var warnings []string
+
+	if wp.URL == "" {
+		warnings = append(warnings, "missing recommended field: url")
+	}
+	if wp.Name == "" {
+		warnings = append(warnings, "missing recommended field: name")
+	}
+	if wp.Headline == "" {
+		warnings = append(warnings, "missing recommended field: headline")
+	}
+	if wp.Description == "" {
+		warnings = append(warnings, "missing recommended field: description")
+	}
+
+	return warnings
+}
+
 // ToJsonLd converts the WebPage struct to a JSON-LD `templ.Component`.
 func (wp *WebPage) ToJsonLd() templ.Component {
 	wp.ensureDefaults()
@@ -111,12 +128,7 @@ func (wp *WebPage) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the WebSite struct as `template.HTML` value for Go's `html/template`.
 func (wp *WebPage) ToGoHTMLJsonLd() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), wp.ToJsonLd())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(wp.ToJsonLd())
 }
 
 func (wp *WebPage) ensureDefaults() {

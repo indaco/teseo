@@ -1,10 +1,8 @@
 package schemaorg
 
 import (
-	"context"
 	"fmt"
 	"html/template"
-	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -139,12 +137,7 @@ func (p *Product) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the Product struct as `template.HTML` value for Go's `html/template`.
 func (p *Product) ToGoHTMLJsonLd() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), p.ToJsonLd())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(p.ToJsonLd())
 }
 
 // ensureDefaults sets default values for Product and its nested objects if they are not already set.

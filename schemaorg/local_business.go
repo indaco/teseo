@@ -1,10 +1,8 @@
 package schemaorg
 
 import (
-	"context"
 	"fmt"
 	"html/template"
-	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -99,6 +97,26 @@ func NewLocalBusiness(name string, description string, url string, telephone str
 	return localBusiness
 }
 
+// Validate returns a list of recommended validation warnings for schema.org LocalBusiness.
+func (lb *LocalBusiness) Validate() []string {
+	var warnings []string
+
+	if lb.Name == "" {
+		warnings = append(warnings, "missing recommended field: name")
+	}
+	if lb.Address == nil {
+		warnings = append(warnings, "missing recommended field: address")
+	}
+	if lb.Telephone == "" {
+		warnings = append(warnings, "missing recommended field: telephone")
+	}
+	if lb.Description == "" {
+		warnings = append(warnings, "missing recommended field: description")
+	}
+
+	return warnings
+}
+
 // ToJsonLd converts the LocalBusiness struct to a JSON-LD `templ.Component`.
 func (lb *LocalBusiness) ToJsonLd() templ.Component {
 	lb.ensureDefaults()
@@ -108,12 +126,7 @@ func (lb *LocalBusiness) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the LocalBusiness struct as `template.HTML` value for Go's `html/template`.
 func (lb *LocalBusiness) ToGoHTMLJsonLd() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), lb.ToJsonLd())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(lb.ToJsonLd())
 }
 
 // ensureDefaults sets default values for LocalBusiness and its nested objects if they are not already set.

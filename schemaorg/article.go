@@ -1,10 +1,8 @@
 package schemaorg
 
 import (
-	"context"
 	"fmt"
 	"html/template"
-	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -89,6 +87,27 @@ func NewArticle(headline string, images []string, author *Person, publisher *Org
 	return article
 }
 
+// Validate checks if the Article has the recommended fields for SEO.
+// It returns a slice of warning messages for missing recommended fields.
+func (art *Article) Validate() []string {
+	var warnings []string
+
+	if art.Headline == "" {
+		warnings = append(warnings, "missing recommended field: headline")
+	}
+	if len(art.Image) == 0 {
+		warnings = append(warnings, "missing recommended field: image")
+	}
+	if art.DatePublished == "" {
+		warnings = append(warnings, "missing recommended field: datePublished")
+	}
+	if art.Author == nil && art.Publisher == nil {
+		warnings = append(warnings, "missing recommended field: author or publisher")
+	}
+
+	return warnings
+}
+
 // ToJsonLd converts the Article struct to a JSON-LD `templ.Component`.
 func (art *Article) ToJsonLd() templ.Component {
 	art.ensureDefaults()
@@ -98,12 +117,7 @@ func (art *Article) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the Article struct as `template.HTML` value for Go's `html/template`.
 func (art *Article) ToGoHTMLJsonLd() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), art.ToJsonLd())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(art.ToJsonLd())
 }
 
 func (art *Article) ensureDefaults() {

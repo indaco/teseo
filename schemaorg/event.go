@@ -1,10 +1,8 @@
 package schemaorg
 
 import (
-	"context"
 	"fmt"
 	"html/template"
-	"log"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
@@ -100,6 +98,22 @@ func NewEvent(name, description, startDate, endDate string, location *Place, org
 	return event
 }
 
+// Validate returns warnings for missing recommended Event fields.
+func (e *Event) Validate() []string {
+	var warnings []string
+
+	if e.Name == "" {
+		warnings = append(warnings, "missing recommended field: name")
+	}
+	if e.StartDate == "" {
+		warnings = append(warnings, "missing recommended field: startDate")
+	}
+	if e.Location == nil {
+		warnings = append(warnings, "missing recommended field: location")
+	}
+	return warnings
+}
+
 // ToJsonLd converts the Event struct to a JSON-LD `templ.Component`.
 func (e *Event) ToJsonLd() templ.Component {
 	e.ensureDefaults()
@@ -109,12 +123,7 @@ func (e *Event) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the Event struct as `template.HTML` value for Go's `html/template`.
 func (e *Event) ToGoHTMLJsonLd() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), e.ToJsonLd())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(e.ToJsonLd())
 }
 
 // ensureDefaults sets default values for Event and its nested objects if they are not already set.

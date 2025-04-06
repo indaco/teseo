@@ -1,16 +1,22 @@
 package schemaorg
 
 import (
-	"context"
 	"encoding/xml"
 	"fmt"
 	"html/template"
 	"io"
-	"log"
 	"os"
 
 	"github.com/a-h/templ"
 	"github.com/indaco/teseo"
+)
+
+var (
+	writeFile                                              = os.WriteFile
+	marshalIndent                                          = xml.MarshalIndent
+	openFile      func(name string) (io.ReadCloser, error) = func(name string) (io.ReadCloser, error) {
+		return os.Open(name)
+	}
 )
 
 // SiteNavigationElement represents a Schema.org SiteNavigationElement object.
@@ -197,6 +203,35 @@ func NewItemList(elements []ItemListElement) ItemList {
 	}
 }
 
+func (s *SiteNavigationElement) Validate() []string {
+	var warnings []string
+
+	if s.Name == "" {
+		warnings = append(warnings, "missing recommended field: name")
+	}
+	if s.URL == "" {
+		warnings = append(warnings, "missing recommended field: url")
+	}
+
+	if s.ItemList == nil || len(s.ItemList.ItemListElement) == 0 {
+		warnings = append(warnings, "ItemList should contain at least one item")
+	} else {
+		for i, item := range s.ItemList.ItemListElement {
+			if item.Name == "" {
+				warnings = append(warnings, fmt.Sprintf("missing name in ItemListElement at position %d", i+1))
+			}
+			if item.URL == "" {
+				warnings = append(warnings, fmt.Sprintf("missing url in ItemListElement at position %d", i+1))
+			}
+			if item.Position == 0 {
+				warnings = append(warnings, fmt.Sprintf("missing position in ItemListElement at index %d", i))
+			}
+		}
+	}
+
+	return warnings
+}
+
 // ToJsonLd converts the SiteNavigationElement struct to a JSON-LD `templ.Component`.
 func (sne *SiteNavigationElement) ToJsonLd() templ.Component {
 	sne.ensureDefaults()
@@ -206,12 +241,7 @@ func (sne *SiteNavigationElement) ToJsonLd() templ.Component {
 
 // ToGoHTMLJsonLd renders the SiteNavigationElement struct as `template.HTML` value for Go's `html/template`.
 func (sne *SiteNavigationElement) ToGoHTMLJsonLd() (template.HTML, error) {
-	html, err := templ.ToGoHTML(context.Background(), sne.ToJsonLd())
-	if err != nil {
-		log.Printf("failed to convert to html: %v", err)
-		return "", err
-	}
-	return html, nil
+	return teseo.RenderToHTML(sne.ToJsonLd())
 }
 
 // ToSitemapFile generates a sitemap XML file from the SiteNavigationElement struct.
@@ -234,7 +264,7 @@ func (s *SiteNavigationElement) ToSitemapFile(filename string) error {
 	}
 
 	// Marshal the sitemap struct to XML
-	xmlData, err := xml.MarshalIndent(sitemap, "", "  ")
+	xmlData, err := marshalIndent(sitemap, "", "  ")
 	if err != nil {
 		return fmt.Errorf("error marshaling sitemap to XML: %v", err)
 	}
@@ -243,7 +273,7 @@ func (s *SiteNavigationElement) ToSitemapFile(filename string) error {
 	xmlData = append([]byte(xml.Header), xmlData...)
 
 	// Write the XML data to a file
-	err = os.WriteFile(filename, xmlData, 0644)
+	err = writeFile(filename, xmlData, 0644)
 	if err != nil {
 		return fmt.Errorf("error writing XML file: %v", err)
 	}
@@ -254,7 +284,7 @@ func (s *SiteNavigationElement) ToSitemapFile(filename string) error {
 // FromSitemapFile parses a sitemap XML file and populates the SiteNavigationElement struct.
 func (s *SiteNavigationElement) FromSitemapFile(filename string) error {
 	// Open the XML file
-	xmlFile, err := os.Open(filename)
+	xmlFile, err := openFile(filename)
 	if err != nil {
 		return fmt.Errorf("could not open XML file: %v", err)
 	}
@@ -308,11 +338,12 @@ func (sne *SiteNavigationElement) ensureDefaults() {
 		sne.Position = 1
 	}
 
-	if sne.ItemList != nil && len(sne.ItemList.ItemListElement) > 0 {
-		sne.ItemList = &ItemList{
-			Context:         "https://schema.org",
-			Type:            "ItemList",
-			ItemListElement: sne.ItemList.ItemListElement,
+	if sne.ItemList != nil {
+		if sne.ItemList.Context == "" {
+			sne.ItemList.Context = "https://schema.org"
+		}
+		if sne.ItemList.Type == "" {
+			sne.ItemList.Type = "ItemList"
 		}
 	}
 }
