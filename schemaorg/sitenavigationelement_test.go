@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"reflect"
+	"slices"
 	"testing"
 )
 
@@ -224,13 +225,7 @@ func TestSiteNavigationElement_Validate(t *testing.T) {
 				return
 			}
 			for _, expected := range tt.expected {
-				found := false
-				for _, got := range warnings {
-					if got == expected {
-						found = true
-						break
-					}
-				}
+				found := slices.Contains(warnings, expected)
 				if !found {
 					t.Errorf("expected warning %q not found in %v", expected, warnings)
 				}
@@ -267,9 +262,15 @@ func TestFromSitemapFile_Errors(t *testing.T) {
 	}
 
 	// Invalid XML
-	tempFile, _ := os.CreateTemp("", "invalid-*.xml")
+	tempFile, err := os.CreateTemp("", "invalid-*.xml")
+	if err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
 	defer os.Remove(tempFile.Name())
-	tempFile.WriteString("<<< invalid xml >>>")
+	_, err = tempFile.WriteString("<<< invalid xml >>>")
+	if err != nil {
+		t.Fatalf("failed to create temp file: %v", err)
+	}
 	tempFile.Close()
 
 	err = sne.FromSitemapFile(tempFile.Name())

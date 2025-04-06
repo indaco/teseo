@@ -1,6 +1,7 @@
 package schemaorg
 
 import (
+	"slices"
 	"testing"
 )
 
@@ -118,13 +119,7 @@ func TestPerson_Validate_MissingFields(t *testing.T) {
 				t.Fatalf("expected %d warnings, got %d: %v", len(tt.expected), len(got), got)
 			}
 			for _, expected := range tt.expected {
-				found := false
-				for _, w := range got {
-					if w == expected {
-						found = true
-						break
-					}
-				}
+				found := slices.Contains(got, expected)
 				if !found {
 					t.Errorf("expected warning %q not found in %v", expected, got)
 				}

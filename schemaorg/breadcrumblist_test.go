@@ -1,6 +1,7 @@
 package schemaorg
 
 import (
+	"slices"
 	"testing"
 )
 
@@ -146,13 +147,7 @@ func TestBreadcrumbList_Validate(t *testing.T) {
 				return
 			}
 			for _, expectedWarning := range tt.expected {
-				found := false
-				for _, w := range warnings {
-					if w == expectedWarning {
-						found = true
-						break
-					}
-				}
+				found := slices.Contains(warnings, expectedWarning)
 				if !found {
 					t.Errorf("expected warning %q not found in %v", expectedWarning, warnings)
 				}

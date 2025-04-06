@@ -1,6 +1,9 @@
 package schemaorg
 
-import "testing"
+import (
+	"slices"
+	"testing"
+)
 
 func TestNewFAQPage_Defaults(t *testing.T) {
 	q := NewQuestion("What is Go?", NewAnswer("A programming language"))
@@ -116,13 +119,7 @@ func TestFAQPage_Validate(t *testing.T) {
 				return
 			}
 			for _, expected := range tt.expected {
-				found := false
-				for _, w := range warnings {
-					if w == expected {
-						found = true
-						break
-					}
-				}
+				found := slices.Contains(warnings, expected)
 				if !found {
 					t.Errorf("missing expected warning: %s", expected)
 				}

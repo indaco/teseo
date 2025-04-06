@@ -2,6 +2,7 @@ package schemaorg
 
 import (
 	"html/template"
+	"slices"
 	"testing"
 )
 
@@ -89,13 +90,7 @@ func TestWebPage_Validate_MissingFields(t *testing.T) {
 	}
 
 	for _, want := range expected {
-		found := false
-		for _, w := range got {
-			if w == want {
-				found = true
-				break
-			}
-		}
+		found := slices.Contains(got, want)
 		if !found {
 			t.Errorf("expected warning %q not found in %v", want, got)
 		}

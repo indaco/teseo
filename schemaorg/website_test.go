@@ -2,6 +2,7 @@ package schemaorg
 
 import (
 	"html/template"
+	"slices"
 	"testing"
 )
 
@@ -87,13 +88,7 @@ func TestWebSite_Validate(t *testing.T) {
 				t.Errorf("expected %d warnings, got %d: %v", len(tt.expected), len(warnings), warnings)
 			}
 			for _, expected := range tt.expected {
-				found := false
-				for _, w := range warnings {
-					if w == expected {
-						found = true
-						break
-					}
-				}
+				found := slices.Contains(warnings, expected)
 				if !found {
 					t.Errorf("missing expected warning: %s", expected)
 				}

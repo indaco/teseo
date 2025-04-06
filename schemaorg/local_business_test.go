@@ -1,6 +1,7 @@
 package schemaorg
 
 import (
+	"slices"
 	"testing"
 )
 
@@ -89,13 +90,7 @@ func TestLocalBusiness_Validate(t *testing.T) {
 				return
 			}
 			for _, expected := range tt.expected {
-				found := false
-				for _, got := range warnings {
-					if expected == got {
-						found = true
-						break
-					}
-				}
+				found := slices.Contains(warnings, expected)
 				if !found {
 					t.Errorf("expected warning %q not found in %v", expected, warnings)
 				}
