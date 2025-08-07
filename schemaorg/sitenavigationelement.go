@@ -326,9 +326,11 @@ func (itemList *SiteNavigationElementList) FromSitemapFile(filename string) (err
 
 	for i, url := range sitemap.Urls {
 		item := SiteNavigationElement{
-			Type:     "SiteNavigationElement",
-			URL:      url.Loc,
-			Position: i + 1,
+			Type:        "SiteNavigationElement",
+			URL:         url.Loc,
+			Name:        url.Loc,
+			Description: "",
+			Position:    i + 1,
 		}
 		itemList.ItemListElement = append(itemList.ItemListElement, item)
 	}

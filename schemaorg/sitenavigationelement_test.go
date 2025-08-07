@@ -30,8 +30,8 @@ var sampleSiteNav = &SiteNavigationElementList{
 	Context: "https://schema.org",
 	Type:    "ItemList",
 	ItemListElement: []SiteNavigationElement{
-		{Type: "SiteNavigationElement", URL: "http://www.example.com/", Position: 1},
-		{Type: "SiteNavigationElement", URL: "http://www.example.com/about", Position: 2},
+		{Type: "SiteNavigationElement", Name: "http://www.example.com/", Description: "", URL: "http://www.example.com/", Position: 1},
+		{Type: "SiteNavigationElement", Name: "http://www.example.com/about", Description: "", URL: "http://www.example.com/about", Position: 2},
 	},
 }
 
