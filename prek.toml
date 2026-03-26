@@ -1,0 +1,19 @@
+fail_fast = true
+
+[[repos]]
+repo = "local"
+
+[[repos.hooks]]
+id = "custom-commit-msg"
+name = "Validate commit message format"
+entry = "scripts/githooks/commit-msg"
+language = "system"
+stages = ["commit-msg"]
+
+[[repos.hooks]]
+id = "pre-push-checks"
+name = "Run quality checks and tests"
+entry = "scripts/githooks/pre-push"
+language = "system"
+stages = ["pre-push"]
+pass_filenames = false
