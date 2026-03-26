@@ -1,31 +1,36 @@
 <h1 align="center">
   teseo
 </h1>
+
 <h2 align="center" style="font-size: 1.5em;">
   Go templ components for SEO.
 </h2>
+
 <p align="center">
-    <a href="https://github.com/indaco/teseo/actions/workflows/ci.yml" target="_blank">
-      <img src="https://github.com/indaco/teseo/actions/workflows/ci.yml/badge.svg" alt="CI" />
-    </a>
-     <a href="https://codecov.io/gh/indaco/teseo">
-      <img src="https://codecov.io/gh/indaco/teseo/branch/main/graph/badge.svg" alt="Code coverage" />
-    </a>
-    <a href="https://goreportcard.com/report/github.com/indaco/teseo" target="_blank">
-        <img src="https://goreportcard.com/badge/indaco/teseo" alt="go report card" />
-    </a>
-    <a href="https://badge.fury.io/gh/indaco%2Fteseo" target="_blank">
-      <img src="https://badge.fury.io/gh/indaco%2Fteseo.svg" alt="version" height="18" />
-   </a>
-    <a href="https://pkg.go.dev/github.com/indaco/teseo/" target="_blank">
-        <img src="https://pkg.go.dev/badge/github.com/indaco/teseo/.svg" alt="go reference" />
-    </a>
-    <a href="https://github.com/indaco/teseo/blob/main/LICENSE" target="_blank">
-        <img src="https://img.shields.io/badge/license-mit-blue?style=flat-square&logo=none" alt="license" />
-    </a>
-    <a href="https://www.jetify.com/devbox/docs/contributor-quickstart/" target="_blank">
-      <img src="https://www.jetify.com/img/devbox/shield_moon.svg" alt="Built with Devbox" />
-    </a>
+  <a href="https://github.com/indaco/teseo/actions/workflows/ci.yml" target="_blank">
+    <img src="https://github.com/indaco/teseo/actions/workflows/ci.yml/badge.svg" alt="CI" />
+  </a>
+  <a href="https://codecov.io/gh/indaco/teseo" target="_blank">
+    <img src="https://codecov.io/gh/indaco/teseo/branch/main/graph/badge.svg" alt="Code coverage" />
+  </a>
+  <a href="https://goreportcard.com/report/github.com/indaco/teseo" target="_blank">
+    <img src="https://goreportcard.com/badge/github.com/indaco/teseo" alt="Go Report Card" />
+  </a>
+  <a href="https://github.com/indaco/teseo/security" target="_blank">
+    <img src="https://img.shields.io/badge/security-govulncheck-green" alt="Security Scan" />
+  </a>
+  <a href="https://github.com/indaco/teseo/releases" target="_blank">
+    <img src="https://img.shields.io/github/v/tag/indaco/teseo?label=version&sort=semver&color=4c1" alt="version">
+  </a>
+  <a href="https://pkg.go.dev/github.com/indaco/teseo" target="_blank">
+    <img src="https://pkg.go.dev/badge/github.com/indaco/teseo.svg" alt="Go Reference" />
+  </a>
+  <a href="LICENSE" target="_blank">
+    <img src="https://img.shields.io/badge/license-mit-blue?style=flat-square" alt="License" />
+  </a>
+  <a href="https://www.jetify.com/devbox" target="_blank">
+    <img src="https://www.jetify.com/img/devbox/shield_moon.svg" alt="Built with Devbox" />
+  </a>
 </p>
 
 **teseo** provides a rich set of SEO-focused Go structs that follow **Schema.org** and **OpenGraph** specifications, with helpers to render structured data using either [templ](https://github.com/a-h/templ) components or Go’s built-in `html/template`.
@@ -142,17 +147,17 @@ The expected output:
 
 ```html
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "url": "https://www.example.com",
-  "name": "Example WebPage",
-  "headline": "Welcome to Example WebPage",
-  "description": "This is an example webpage",
-  "about": "Something related to the home page",
-  "keywords": "example, webpage, demo",
-  "inLanguage": "en"
-}
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "url": "https://www.example.com",
+    "name": "Example WebPage",
+    "headline": "Welcome to Example WebPage",
+    "description": "This is an example webpage",
+    "about": "Something related to the home page",
+    "keywords": "example, webpage, demo",
+    "inLanguage": "en"
+  }
 </script>
 ```
 
@@ -204,24 +209,24 @@ The expected output for a URL like `https://www.example.com/about`:
 
 ```html
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position": 1,
-      "name": "Home",
-      "item": "https://www.example.com"
-    },
-    {
-      "@type": "ListItem",
-      "position": 2,
-      "name": "About",
-      "item": "https://www.example.com/about"
-    }
-  ]
-}
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.example.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "About",
+        "item": "https://www.example.com/about"
+      }
+    ]
+  }
 </script>
 ```
 
@@ -266,25 +271,25 @@ The expected output:
 
 ```html
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  "identifier": "main",
-  "itemListElement": [
-    {
-      "@type": "SiteNavigationElement",
-      "position": 1,
-      "name": "Home",
-      "url": "https://www.example.com"
-    },
-    {
-      "@type": "SiteNavigationElement",
-      "position": 2,
-      "name": "About",
-      "url": "https://www.example.com/about"
-    }
-  ]
-}
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "identifier": "main",
+    "itemListElement": [
+      {
+        "@type": "SiteNavigationElement",
+        "position": 1,
+        "name": "Home",
+        "url": "https://www.example.com"
+      },
+      {
+        "@type": "SiteNavigationElement",
+        "position": 2,
+        "name": "About",
+        "url": "https://www.example.com/about"
+      }
+    ]
+  }
 </script>
 ```
 
@@ -360,11 +365,20 @@ templ FirstArticle() {
 The expected output:
 
 ```html
-<meta property="og:type" content="article">
-<meta property="og:title" content="Example Article">
-<meta property="og:url" content="https://www.example.com/article/example-article">
-<meta property="og:description" content="This is an example article description.">
-<meta property="og:image" content="https://www.example.com/images/article.jpg">
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Example Article" />
+<meta
+  property="og:url"
+  content="https://www.example.com/article/example-article"
+/>
+<meta
+  property="og:description"
+  content="This is an example article description."
+/>
+<meta
+  property="og:image"
+  content="https://www.example.com/images/article.jpg"
+/>
 ```
 
 ### Twitter Cards
@@ -405,18 +419,18 @@ templ AboutMe() {
 The expected output:
 
 ```html
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Example Summary">
-<meta name="twitter:description" content="This is an example summary card.">
-<meta name="twitter:image" content="https://www.example.com/summary.jpg">
-<meta name="twitter:site" content="@example_site">
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Example Summary" />
+<meta name="twitter:description" content="This is an example summary card." />
+<meta name="twitter:image" content="https://www.example.com/summary.jpg" />
+<meta name="twitter:site" content="@example_site" />
 ```
 
 This works for all supported Twitter Cards (e.g., App Card, Player Card, etc.).
 
 ## Demo
 
-Check out the [_demos](_demos/) folder for real-world usage of:
+Check out the [\_demos](_demos/) folder for real-world usage of:
 
 - JSON-LD structured data
 - OpenGraph meta tags
