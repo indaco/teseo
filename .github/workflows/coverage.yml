@@ -1,24 +1,35 @@
-name: coverage
+name: Test Coverage
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    paths:
+      - '**.go'
+      - 'go.mod'
+      - 'go.sum'
   workflow_dispatch:
 
-jobs:
-  test:
-    name: test
-    runs-on: ubuntu-latest
+permissions: {}
 
+env:
+  GO_VERSION: '1.25'
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
-          go-version: '1.23'
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: go.sum
           check-latest: true
 
       - name: Install Go modules
@@ -27,8 +38,13 @@ jobs:
       - name: Verify dependencies
         run: go mod verify
 
-      - name: Run tests
-        run: go test ./... -coverprofile=coverage.txt
+      - name: Install just
+        uses: taiki-e/install-action@v2
+        with:
+          tool: just
+
+      - name: Run test
+        run: just test-coverage
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
