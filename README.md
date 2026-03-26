@@ -439,11 +439,7 @@ Check out the [\_demos](_demos/) folder for real-world usage of:
 ### Run the demo
 
 ```bash
-# Taskfile
-task dev # http://localhost:7332
-
-# Makefile
-make dev # http://localhost:7332
+just dev # http://localhost:3300
 ```
 
 ## Contributing
