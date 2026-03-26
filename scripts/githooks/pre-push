@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# pre-push hook - runs quality checks and tests before pushing
+# Supports both devbox and non-devbox environments
+
+# Define color codes
+RED='\x1b[31;1m'
+GREEN='\x1b[32m'
+YELLOW='\x1b[33m'
+DIM='\x1b[2m'
+RESET='\x1b[0m'
+
+# Determine the command prefix based on devbox availability
+if command -v devbox >/dev/null 2>&1; then
+    CMD_PREFIX="devbox run"
+    printf "${DIM}Using devbox environment${RESET}\n"
+else
+    CMD_PREFIX=""
+fi
+
+# Run quality checks
+printf "${YELLOW}Running quality checks...${RESET}\n"
+if $CMD_PREFIX just check; then
+    printf "${GREEN}Quality checks passed${RESET}\n"
+else
+    printf "${RED}Quality checks failed!${RESET}\n" >&2
+    exit 1
+fi
+
+# Run tests
+printf "${YELLOW}Running tests...${RESET}\n"
+if $CMD_PREFIX just test-race; then
+    printf "${GREEN}Tests passed${RESET}\n"
+else
+    printf "${RED}Tests failed!${RESET}\n" >&2
+    exit 1
+fi
+
+printf "${GREEN}All pre-push checks passed${RESET}\n"
+exit 0
