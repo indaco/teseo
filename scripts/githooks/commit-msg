@@ -1,0 +1,52 @@
+#!/bin/sh
+
+# commit-msg hook with length validation
+# Adheres to Conventional Commits specification with additional types (breaking)
+# Based on: https://github.com/leoroese/blog-tube/blob/main/.husky/commit-msg
+
+# Define color codes
+RED='\x1b[31;1m'
+GREEN='\x1b[32m'
+YELLOW='\x1b[33m'
+DIM='\x1b[2m'
+RESET='\x1b[0m'
+
+# Ensure commit message file exists
+if [ ! -f "$1" ]; then
+    exit 0
+fi
+
+commit_msg=$(head -1 "$1")
+
+# Allow merge commits, revert commits, and other special Git commits
+if echo "$commit_msg" | grep -qE "^(Merge|Revert|Squash|Fixup|Amend)"; then
+    exit 0
+fi
+
+# Check conventional commit format
+if ! echo "$commit_msg" | grep -qE "^(feat|fix|ci|chore|docs|test|style|refactor|perf|build|revert|breaking)(\([^)]+\))?: .{1,}$"; then
+    echo ""
+    printf "\x1b[31;1mInvalid commit format!\x1b[0m\n" >&2
+    printf "Expected: \x1b[33mtype(scope): description\x1b[0m\n" >&2
+    printf "Example:  \x1b[32mfeat(auth): add login validation\x1b[0m\n" >&2
+    printf "Types:    feat, fix, ci, chore, docs, test, style, refactor, perf, build, revert, breaking\n" >&2
+    echo ""
+    exit 1
+fi
+
+# Check length with detailed feedback
+msg_length=${#commit_msg}
+max_length=88
+
+if [ "$msg_length" -gt "$max_length" ]; then
+    echo ""
+    printf "${RED}Commit message too long!${RESET}\n" >&2
+    printf "Current length: ${RED}%d${RESET} chars\n" $msg_length >&2
+    printf "Maximum length: ${GREEN}%d${RESET} chars\n" $max_length >&2
+    printf "Trim by: ${YELLOW}%d${RESET} chars\n" $((msg_length - max_length)) >&2
+    echo ""
+    printf "Your message:\n" >&2
+    printf "${DIM}%s${RESET}\n" "$commit_msg" >&2
+    echo ""
+    exit 1
+fi
