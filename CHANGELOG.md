@@ -4,11 +4,44 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). The changelog is generated and managed by [sley](https://github.com/indaco/sley).
 
+## v0.2.4 - 2026-03-26
+
+### 🩹 Fixes
+
+- **sitenavigationelementlist:** set Name and Description in FromSitemapFile ([11c10af](https://github.com/indaco/teseo/commit/11c10af))
+
+### 📖 Documentation
+
+- **README:** add more badges ([170e63c](https://github.com/indaco/teseo/commit/170e63c)) ([#19](https://github.com/indaco/teseo/pull/19))
+
+### 🏡 Chores
+
+- add prek.toml configuration ([a751bc7](https://github.com/indaco/teseo/commit/a751bc7))
+- migrate task runner from Taskfile/Make to just ([f2f607d](https://github.com/indaco/teseo/commit/f2f607d)) ([#16](https://github.com/indaco/teseo/pull/16))
+- setup github.com/indaco/sley ([483a43d](https://github.com/indaco/teseo/commit/483a43d)) ([#15](https://github.com/indaco/teseo/pull/15))
+- regenerate \*\_templ.go files with templ v0.3.924 ([1dc7ca5](https://github.com/indaco/teseo/commit/1dc7ca5))
+- **demos:** fix type for AreaServed in seo.templ ([36a50ef](https://github.com/indaco/teseo/commit/36a50ef))
+
+### 🤖 CI
+
+- harden GitHub Actions workflows with zizmor recommendations ([736fdc2](https://github.com/indaco/teseo/commit/736fdc2)) ([#17](https://github.com/indaco/teseo/pull/17))
+
+### 📦 Build
+
+- upgrade templ to v0.3.1001 ([8da3e96](https://github.com/indaco/teseo/commit/8da3e96)) ([#18](https://github.com/indaco/teseo/pull/18))
+- update templ to v0.3.924 ([e7944e6](https://github.com/indaco/teseo/commit/e7944e6))
+
+**Full Changelog:** [v0.2.3...v0.2.4](https://github.com/indaco/teseo/compare/v0.2.3...v0.2.4)
+
+### ❤️ Contributors
+
+- [@indaco](https://github.com/indaco)
+
 ## v0.2.3 - 2025-07-21
 
 [compare changes](https://github.com/indaco/teseo/compare/v0.2.2...v0.2.3)
 
-### Fixes
+### 🩹 Fixes
 
 - Merge pull request [#14](https://github.com/indaco/teseo/pull/14) from [@chrisbward](https://github.com/chrisbward)
 
@@ -56,7 +89,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### 🏡 Chore
 
 - **go.mod:** Set go 1.23.0 and add toolchain directive ([6138602](https://github.com/indaco/teseo/commit/6138602))
-- Regenerate *_templ.go files with templ v0.3.898 ([dd81e83](https://github.com/indaco/teseo/commit/dd81e83))
+- Regenerate \*\_templ.go files with templ v0.3.898 ([dd81e83](https://github.com/indaco/teseo/commit/dd81e83))
 - Update devbox.lock ([32359f6](https://github.com/indaco/teseo/commit/32359f6))
 
 ### 🎨 Styles
@@ -98,8 +131,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### 📖 Documentation
 
 - **README:** Add contributing guide and update sections ([3200ba5](https://github.com/indaco/teseo/commit/3200ba5))
-- **README:** Update  badges and reorganize the content ([d6c63b3](https://github.com/indaco/teseo/commit/d6c63b3))
-- **README:** Remove  slash from meta output ([0ee3696](https://github.com/indaco/teseo/commit/0ee3696))
+- **README:** Update badges and reorganize the content ([d6c63b3](https://github.com/indaco/teseo/commit/d6c63b3))
+- **README:** Remove slash from meta output ([0ee3696](https://github.com/indaco/teseo/commit/0ee3696))
 
 ### 📦 Build
 
