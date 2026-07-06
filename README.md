@@ -13,9 +13,6 @@
   <a href="https://codecov.io/gh/indaco/teseo" target="_blank">
     <img src="https://codecov.io/gh/indaco/teseo/branch/main/graph/badge.svg" alt="Code coverage" />
   </a>
-  <a href="https://goreportcard.com/report/github.com/indaco/teseo" target="_blank">
-    <img src="https://goreportcard.com/badge/github.com/indaco/teseo" alt="Go Report Card" />
-  </a>
   <a href="https://github.com/indaco/teseo/actions/workflows/security.yml" target="_blank">
     <img src="https://github.com/indaco/teseo/actions/workflows/security.yml/badge.svg" alt="Security Scan" />
   </a>
