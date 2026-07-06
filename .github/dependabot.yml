@@ -1,8 +1,20 @@
 version: 2
 updates:
-  - package-ecosystem: 'gomod'
-    directory: '/'
+  - package-ecosystem: "gomod"
+    directory: "/"
     schedule:
-      interval: 'monthly'
+      interval: "monthly"
     labels:
-      - 'deps'
+      - "deps"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "ci"
+      - "deps"
+    commit-message:
+      prefix: "ci"
+    open-pull-requests-limit: 3
