@@ -30,7 +30,8 @@ fi
 h2 "Go Tools"
 
 if command_exists go; then
-    install_go_tool "modernize" "golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest"
+    # Pinned to gopls v0.21.0 — last release compatible with go 1.25 (v0.22.0 requires go 1.26)
+    install_go_tool "modernize" "golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@v0.21.0"
     install_go_tool "govulncheck" "golang.org/x/vuln/cmd/govulncheck@latest"
 
     # goreportcard-cli requires manual installation:

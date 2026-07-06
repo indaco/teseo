@@ -60,7 +60,8 @@ jobs:
 
       - name: Install Go tools
         run: |
-          go install golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest
+          # Pinned to gopls v0.21.0 — last release compatible with go 1.25 (v0.22.0 requires go 1.26)
+          go install golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@v0.21.0
 
       - name: Run go modernize
         run: just modernize
