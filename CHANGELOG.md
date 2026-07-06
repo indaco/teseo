@@ -4,6 +4,33 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). The changelog is generated and managed by [sley](https://github.com/indaco/sley).
 
+## v0.2.5 - 2026-07-06
+
+### 📖 Documentation
+
+- **readme:** remove deprecated goreportcart badge ([7758520](https://github.com/indaco/teseo/commit/7758520))
+- **README:** replace Taskfile/Makefile references with just in demo section ([537a8a7](https://github.com/indaco/teseo/commit/537a8a7))
+
+### 🏡 Chores
+
+- **devbox:** pin go 1.25 ([189a29c](https://github.com/indaco/teseo/commit/189a29c))
+- remove obsolete .scripts hook setup files ([e381c09](https://github.com/indaco/teseo/commit/e381c09))
+
+### 🤖 CI
+
+- pin modernize to gopls v0.21.0 for go 1.25 compatibility ([c3b89d8](https://github.com/indaco/teseo/commit/c3b89d8))
+- **dependabot:** add check for gh actions ([efb01a0](https://github.com/indaco/teseo/commit/efb01a0))
+- upgrade gh actions to the latest versions ([8e2e9a3](https://github.com/indaco/teseo/commit/8e2e9a3))
+- add security github workflow ([bdb150c](https://github.com/indaco/teseo/commit/bdb150c))
+
+### 📦 Build
+
+- bump go module dependencies ([f9be68e](https://github.com/indaco/teseo/commit/f9be68e))
+
+### ❤️ Contributors
+
+- [@indaco](https://github.com/indaco)
+
 ## v0.2.4 - 2026-03-26
 
 ### 🩹 Fixes
@@ -89,7 +116,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### 🏡 Chore
 
 - **go.mod:** Set go 1.23.0 and add toolchain directive ([6138602](https://github.com/indaco/teseo/commit/6138602))
-- Regenerate \*\_templ.go files with templ v0.3.898 ([dd81e83](https://github.com/indaco/teseo/commit/dd81e83))
+- Regenerate *_templ.go files with templ v0.3.898 ([dd81e83](https://github.com/indaco/teseo/commit/dd81e83))
 - Update devbox.lock ([32359f6](https://github.com/indaco/teseo/commit/32359f6))
 
 ### 🎨 Styles
@@ -131,8 +158,8 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### 📖 Documentation
 
 - **README:** Add contributing guide and update sections ([3200ba5](https://github.com/indaco/teseo/commit/3200ba5))
-- **README:** Update badges and reorganize the content ([d6c63b3](https://github.com/indaco/teseo/commit/d6c63b3))
-- **README:** Remove slash from meta output ([0ee3696](https://github.com/indaco/teseo/commit/0ee3696))
+- **README:** Update  badges and reorganize the content ([d6c63b3](https://github.com/indaco/teseo/commit/d6c63b3))
+- **README:** Remove  slash from meta output ([0ee3696](https://github.com/indaco/teseo/commit/0ee3696))
 
 ### 📦 Build
 
