@@ -32,7 +32,8 @@ h2 "Go Tools"
 if command_exists go; then
     # Pinned to gopls v0.21.0 — last release compatible with go 1.25 (v0.22.0 requires go 1.26)
     install_go_tool "modernize" "golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@v0.21.0"
-    install_go_tool "govulncheck" "golang.org/x/vuln/cmd/govulncheck@latest"
+    # Pinned to x/vuln v1.7.0 — last release compatible with go 1.25 (v1.8.0 requires go 1.26)
+    install_go_tool "govulncheck" "golang.org/x/vuln/cmd/govulncheck@v1.7.0"
 
     # goreportcard-cli requires manual installation:
     # git clone https://github.com/gojp/goreportcard.git && cd goreportcard && make install && go install ./cmd/goreportcard-cli
