@@ -39,7 +39,7 @@ jobs:
         run: go mod verify
 
       - name: Install just
-        uses: taiki-e/install-action@v2.87.1
+        uses: taiki-e/install-action@v2.87.21
         with:
           tool: just
 
