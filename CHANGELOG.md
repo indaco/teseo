@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html). The changelog is generated and managed by [sley](https://github.com/indaco/sley).
 
+## v0.2.6 - 2026-11-02
+
+### 🤖 CI
+
+- bump taiki-e/install-action from 2.87.21 to 2.88.0 ([457614a](https://github.com/indaco/teseo/commit/457614a)) ([#27](https://github.com/indaco/teseo/pull/27))
+- bump taiki-e/install-action from 2.87.1 to 2.87.21 ([ea0c89c](https://github.com/indaco/teseo/commit/ea0c89c)) ([#25](https://github.com/indaco/teseo/pull/25))
+- pin govulncheck to v1.7.0 for go 1.25 compatibility ([90ee706](https://github.com/indaco/teseo/commit/90ee706))
+- bump taiki-e/install-action from 2.85.4 to 2.87.1 ([9b571ee](https://github.com/indaco/teseo/commit/9b571ee)) ([#24](https://github.com/indaco/teseo/pull/24))
+- bump taiki-e/install-action from 2 to 2.85.4 ([21ac524](https://github.com/indaco/teseo/commit/21ac524)) ([#22](https://github.com/indaco/teseo/pull/22))
+- bump actions/setup-go from 6 to 7 ([8288de4](https://github.com/indaco/teseo/commit/8288de4)) ([#23](https://github.com/indaco/teseo/pull/23))
+
+### 📦 Build
+
+- **deps:** bump templ to v0.3.1100 and go to 1.26 ([8176509](https://github.com/indaco/teseo/commit/8176509)) ([#28](https://github.com/indaco/teseo/pull/28))
+
+### ❤️ Contributors
+
+- [@indaco](https://github.com/indaco)
+
 ## v0.2.5 - 2026-07-06
 
 ### 📖 Documentation
