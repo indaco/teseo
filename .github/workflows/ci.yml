@@ -18,7 +18,7 @@ on:
 permissions: {}
 
 env:
-  GO_VERSION: "1.25"
+  GO_VERSION: "1.26"
 
 jobs:
   lint:
@@ -53,15 +53,16 @@ jobs:
       - name: Install golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: latest
+          # Pinned to v2.15.0 — built with go 1.26
+          version: v2.15.0
           install-mode: binary
           skip-cache: false
           install-only: true
 
       - name: Install Go tools
         run: |
-          # Pinned to gopls v0.21.0 — last release compatible with go 1.25 (v0.22.0 requires go 1.26)
-          go install golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@v0.21.0
+          # Pinned to gopls v0.23.0 — last release compatible with go 1.26 (v0.24.0 requires go 1.27)
+          go install golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@v0.23.0
 
       - name: Run go modernize
         run: just modernize

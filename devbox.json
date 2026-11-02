@@ -1,9 +1,9 @@
 {
-  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.17.5/.schema/devbox.schema.json",
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.19.0/.schema/devbox.schema.json",
   "packages": [
     "git@latest",
-    "go@1.25",
-    "golangci-lint@latest",
+    "go@1.26",
+    "golangci-lint@2.15.0",
     "just@latest",
     "prek@latest"
   ],
